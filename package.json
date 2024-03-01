@@ -9,7 +9,9 @@
     "start": "node ./dist/server.js",
     "test": "jest --no-cache --forceExit --logHeapUsage --debug --detectOpenHandles",
     "test-changed": "jest --onlyChanged",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push"
   },
   "keywords": [],
   "author": "",
@@ -33,7 +35,6 @@
     "nodemon": "^2.0.22",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
-    "redis": "^4.6.7",
     "supertest": "^6.3.3",
     "ts-jest": "^29.0.3",
     "uuid": "^9.0.0"
