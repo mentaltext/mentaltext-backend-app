@@ -1,8 +1,6 @@
-import { NextFunction, Request, Response, Router } from "express";
-import { passportUserMiddleware } from "@/shared/PassportProvider/infraestructure/passportConfig";
-import { UserRegisterDto } from "@/core/User/infraestructure/DTOs/UserRegisterDto";
-import { UserLoginDto } from "@/core/User/infraestructure/DTOs/UserLoginDto";
+import { Request, Response, Router } from "express";
 import { UserCasesContainer } from "@/core/User/infraestructure/containers/UserCasesContainer";
+import { UserSendPhoneValidateDto } from "@/core/User/infraestructure/DTOs/UserSendPhoneValidate";
 
 export const register = (router: Router) => {
   if (process.env.NODE_ENV !== "prod") {
@@ -33,10 +31,5 @@ export const register = (router: Router) => {
       throw new CustomError("Test custom error");
     });
   }
-  router.post("/register", UserRegisterDto, (req: Request, res: Response) => UserCasesContainer.userRegisterUserCase(req, res));
-  router.post("/login", UserLoginDto, (req: Request, res: Response) => UserCasesContainer.userLoginUserCase(req, res));
-  router.get("/get-my-profile", async (req: Request, res: Response, next: NextFunction) => {
-    passportUserMiddleware(req, res, next);
-    return UserCasesContainer.userGetProfileUserCase(req, res);
-  });
+  router.get("/user/send-phone-validate", UserSendPhoneValidateDto, (req: Request, res: Response) => UserCasesContainer.userSendPhoneValidateUserCase(req, res));
 };
