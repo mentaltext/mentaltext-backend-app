@@ -35,7 +35,10 @@ export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLo
       await UpdateUserImp(user);
     }
 
-    return ResponseLogger(StatusCodes.OK, "Phone validated", user);
+    return ResponseLogger(StatusCodes.OK, "Phone validated", {
+      ...user,
+      temporaryCode: "",
+    });
   } catch (error) {
     if (error instanceof Error) {
       return ResponseLogger(StatusCodes.BAD_REQUEST, error.message, null);
