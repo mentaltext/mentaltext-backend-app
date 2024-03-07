@@ -6,5 +6,5 @@ import { Nullable } from "@/shared/Types/TNullable";
 export interface IUserRepository {
     save(user: IUserBase): Promise<GetResult<IUserBase, { [x: string]: () => unknown; }>>;
     find(criteria: Filter<IUserBase>[]): Promise<Nullable<IUserBase>>;
-    update(phone: string, user: Partial<IUserBase>): Promise<GetResult<IUserBase, { [x: string]: () => unknown; }>>;
+    // update(phone: string, user: Partial<IUserBase>): Promise<GetResult<IUserBase, { [x: string]: () => unknown; }>>;
 }

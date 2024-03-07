@@ -11,33 +11,196 @@ datasource db {
 }
 
 model User {
-  phoneNumber         String          @id
-  name                String
-  profilePhoto        String
-  language            String
-  phoneCode           String // +1, +91, +44
-  temporaryCode       String
-  userProfile         UserProfile?
-  userSettings        UserSettings?
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
+  phoneNumber       String              @id
+  name              String
+  profilePhoto      String
+  language          String
+  phoneCode         String // +1, +91, +44
+  temporaryCode     String
+  userProfile       UserProfile?
+  userSettings      UserSettings?
+  chats             ChatParticipants[]
+  messages          Message[]
+  chatSettings      ChatSettings[]
+  messageStatus     MessageStatus[]
+  favoriteMessages  FavoriteMessages[]
+  createdGroups     GroupChat[]         @relation("createdBy")
+  groupParticipants GroupParticipants[]
+  blockedUsers      BlockedUsers[]      @relation("blocker")
+  blockedBy         BlockedUsers[]      @relation("blocked")
+
+  retainedMessages RetainedMessages[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
 }
 
 model UserProfile {
-  phoneNumber         String      @id @unique
-  bio                 String
-  lastSeen            DateTime
-  status              UserStatus
-  user                User        @relation(fields: [phoneNumber], references: [phoneNumber])
+  phoneNumber String     @unique
+  bio         String
+  lastSeen    DateTime
+  status      UserStatus
+  user        User       @relation(fields: [phoneNumber], references: [phoneNumber])
 }
 
 model UserSettings {
-  userId              String      @id
+  userId               String  @id
   notificationsEnabled Boolean
-  user                User        @relation(fields: [userId], references: [phoneNumber])
+  user                 User    @relation(fields: [userId], references: [phoneNumber])
+}
+
+model Chat {
+  id               String             @id
+  lastConnectionId String?
+  chatSettings     ChatSettings[]
+  participants     ChatParticipants[]
+  messages         Message[]
+  retainedMessages RetainedMessages[]
+  connections      Connections[]
+}
+
+model ChatSettings {
+  chatId    String   @id
+  iaEnabled Boolean  @default(false)
+  updatedAt DateTime
+  updatedBy String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  user      User     @relation(fields: [updatedBy], references: [phoneNumber])
+}
+
+model ChatParticipants {
+  chatId String
+  userId String
+  chat   Chat   @relation(fields: [chatId], references: [id])
+  user   User   @relation(fields: [userId], references: [phoneNumber])
+
+  @@id([chatId, userId])
+}
+
+model Message {
+  id        String
+  chatId    String
+  ownerId   String
+  content   String
+  type      String
+  createdAt DateTime
+  themes    String[]
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  owner     User     @relation(fields: [ownerId], references: [phoneNumber])
+
+  messageStatus    MessageStatus[]
+  favoriteMessages FavoriteMessages[]
+
+  @@id([id])
+}
+
+model RetainedMessages {
+  id        String
+  chatId    String
+  ownerId   String
+  content   String
+  type      String
+  createdAt DateTime
+  status    String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  owner     User     @relation(fields: [ownerId], references: [phoneNumber])
+
+  @@id([id])
+}
+
+model MessageStatus {
+  messageId   String
+  recipientId String
+  status      String
+  updatedAt   DateTime
+  message     Message  @relation(fields: [messageId], references: [id])
+  recipient   User     @relation(fields: [recipientId], references: [phoneNumber])
+
+  @@id([messageId, recipientId])
+}
+
+model FavoriteMessages {
+  id        String
+  userId    String
+  messageId String
+  createdAt DateTime
+  user      User     @relation(fields: [userId], references: [phoneNumber])
+  message   Message  @relation(fields: [messageId], references: [id])
+
+  @@id([id])
+  @@unique([userId, messageId], name: "unique_favorite_messages")
+}
+
+model GroupChat {
+  id           String
+  name         String
+  createdAt    DateTime
+  createdBy    String
+  participants GroupParticipants[]
+  creator      User                @relation("createdBy", fields: [createdBy], references: [phoneNumber])
+
+  @@id([id])
+}
+
+model GroupParticipants {
+  groupId  String
+  userId   String
+  joinedAt DateTime
+  role     String
+  group    GroupChat @relation(fields: [groupId], references: [id])
+  user     User      @relation(fields: [userId], references: [phoneNumber])
+
+  @@id([groupId, userId])
+}
+
+model BlockedUsers {
+  id        String
+  blockerId String
+  blockedId String
+  createdAt DateTime
+  blocker   User     @relation("blocker", fields: [blockerId], references: [phoneNumber])
+  blocked   User     @relation("blocked", fields: [blockedId], references: [phoneNumber])
+
+  @@id([id])
+  @@unique([blockerId, blockedId], name: "unique_user_blocks")
+}
+
+model Connections {
+  id         String
+  chatId     String
+  occurredAt DateTime
+  chat       Chat     @relation(fields: [chatId], references: [id])
+
+  @@id([id])
+}
+
+// Define enums
+enum GroupRole {
+  MEMBER
+  ADMIN
+  OWNER
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  AUDIO
+  VIDEO
+}
+
+enum QueueStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+enum MessageReadStatus {
+  SENT
+  DELIVERED
+  READ
 }
 
 enum UserStatus {
-  ACTIVE
-  INACTIVE
+  ONLINE
+  OFFLINE
+  INVISIBLE
 }

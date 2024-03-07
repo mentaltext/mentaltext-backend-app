@@ -1,12 +1,15 @@
 import { operatorEnum } from "@/shared/Types/IFilter";
 import { TUserSendPhoneValidateUserCase } from "../../domain/IUserApplicationUserCases";
 import { StatusCodes } from "http-status-codes";
+import { IUserBase } from "../../domain/IUser";
+import { Nullable } from "@/shared/Types/TNullable";
+import { generarNumeroAleatorio } from "@/shared/utils/RandomNumber";
 
-export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLogger, SaveUserImp, FindUserImp, _UpdateUserImp) => async (req) => {
+export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLogger, SaveUserImp, FindUserImp, UpdateUserImp) => async (req) => {
   try {
-    const { phoneNumber } = req.body;
+    const { phoneCode, phoneNumber } = req.body;
 
-    const user = await FindUserImp([
+    let user: Nullable<IUserBase> = await FindUserImp([
       {
         field: "phoneNumber",
         value: phoneNumber,
@@ -15,7 +18,21 @@ export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLo
     ]);
 
     if (!user) {
-      throw new Error("User not found");
+      user = {
+        name: "",
+        language: "",
+        phoneNumber,
+        phoneCode,
+        temporaryCode: generarNumeroAleatorio(5),
+        profilePhoto: "",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      await SaveUserImp(user);
+    } else {
+      user.temporaryCode = generarNumeroAleatorio(5);
+      await UpdateUserImp(user);
     }
 
     return ResponseLogger(StatusCodes.OK, "Phone validated", user);

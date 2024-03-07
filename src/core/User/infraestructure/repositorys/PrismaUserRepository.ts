@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { IUserRepository } from "@/core/User/domain/IUserRepository";
-import { v4 as uuidv4 } from "uuid";
 import { Filter, operatorEnum } from "@/shared/Types/IFilter";
 import { IUserBase } from "../../domain/IUser";
 
@@ -8,17 +7,12 @@ export const PrismaUserRepository = (
   client: PrismaClient
 ): IUserRepository => ({
   async save(user) {
-    const nUser = client.user.create({
+    const nUser = await client.user.create({
       data: {
-        id: uuidv4(),
-        name: user.name,
-        email: user.email,
-        lastname: user.lastname,
-        password: user.password,
-        createdAt: user.createdAt.toISOString() || new Date().toISOString(),
-        updatedAt: user.updatedAt.toISOString() || new Date().toISOString(),
+        ...user,
       },
     });
+
     return nUser;
   },
   async find(criteria) {
@@ -34,6 +28,16 @@ export const PrismaUserRepository = (
     }
     return user;
   },
+  update(phone: string, user: Partial<IUserBase>) {
+    return client.user.update({
+      where: {
+        phoneNumber: phone,
+      },
+      data: {
+        ...user,
+      },
+    });
+  }
 });
 
 const isFilter = (obj: Filter<IUserBase>): obj is Filter<IUserBase> =>
