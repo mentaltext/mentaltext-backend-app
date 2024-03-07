@@ -14,7 +14,7 @@ model User {
   phoneNumber       String              @id
   name              String
   profilePhoto      String
-  language          String
+  language          String // en, es, fr
   phoneCode         String // +1, +91, +44
   temporaryCode     String
   userProfile       UserProfile?
