@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import { UserCasesContainer } from "@/core/User/infraestructure/containers/UserCasesContainer";
 import { UserSendPhoneValidateDto } from "@/core/User/infraestructure/DTOs/UserSendPhoneValidate";
+import { UserCodePhoneValidateDto } from "@/core/User/infraestructure/DTOs/UserCodePhoneValidate";
 
 export const register = (router: Router) => {
   if (process.env.NODE_ENV !== "prod") {
@@ -31,5 +32,6 @@ export const register = (router: Router) => {
       throw new CustomError("Test custom error");
     });
   }
-  router.get("/user/send-phone-validate", UserSendPhoneValidateDto, (req: Request, res: Response) => UserCasesContainer.userSendPhoneValidateUserCase(req, res));
+  router.post("/user/send-phone-validate", UserSendPhoneValidateDto, (req: Request, res: Response) => UserCasesContainer.userSendPhoneValidateUserCase(req, res));
+  router.post("/user/code-phone-validate", UserCodePhoneValidateDto, (req: Request, res: Response) => UserCasesContainer.userCodePhoneValidateUserCase(req, res));
 };
