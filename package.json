@@ -12,16 +12,19 @@
     "prepare": "husky install",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
-    "compile": "tsc && rimraf ./dist/lib/cli-genetator-files/templates && shx mkdir -p ./dist/lib/cli-genetator-files/templates && shx cp -r ./src/lib/cli-genetator-files/templates/* ./dist/lib/cli-genetator-files/templates/",
-    "cli-generator": "npm run compile && node ./dist/lib/cli-genetator-files/index.mjs"
+    "compile": "tsc",
+    "cli-generator": "npm run compile && node ./dist/lib/cli-genetator-files/index.mjs",
+    "generate-markdown-tree": "node scripts/MarkdownGenerateTree.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.529.1",
     "@prisma/client": "^4.16.2",
     "@types/inquirer": "^9.0.7",
+    "aws-sdk": "^2.1573.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",

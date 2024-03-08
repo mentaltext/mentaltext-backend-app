@@ -9,4 +9,5 @@ type EndpointHandler<T extends unknown[], ReqBody = unknown> = (ResponserProvide
 
 
 export type TUserSendPhoneValidateUserCase = EndpointHandler<[SaveUser, FindUser, UpdateUser], TUserSendPhoneValidateReqBody>;
+export type TUserCreateProfile = EndpointHandler<[SaveUser, FindUser, UpdateUser], TUserSendPhoneValidateReqBody>;
 export type TUserCodePhoneValidateUserCase = EndpointHandler<[FindUser, UpdateUser], TUserCodePhoneValidateReqBody>;
