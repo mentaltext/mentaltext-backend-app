@@ -1,9 +1,3 @@
-export interface IUserBase {
-    id: string;
-    email: string;
-    name?: string | null;
-    lastname?: string | null;
-    password: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { User } from "@prisma/client";
+
+export type IUserBase = User;

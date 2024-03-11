@@ -14,7 +14,7 @@ export const UserJwt = (UserFind: FindUser) => new JwtStrategy(userOptions, asyn
   try {
     const user = await UserFind([
       {
-        field: "id",
+        field: "phoneNumber",
         value: jwtPayload.id,
         operator: operatorEnum.EQUAL
       }

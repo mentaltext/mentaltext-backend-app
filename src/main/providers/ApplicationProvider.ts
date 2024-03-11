@@ -7,6 +7,7 @@ import { RegisterRoutes } from "./RouterProvider";
 import ErrorHandlerProvider from "./ErrorHandlerProvider";
 import passport from "passport";
 import http from "http";
+import { S3Provider } from "./AwsProvider";
 
 export const server = {
   httpServer: null as http.Server | null,
@@ -34,10 +35,16 @@ export const ApplicationProvider = (logger: ILogger, inTest = false) => async ()
 
 
   const port = process.env.PORT;
+
+  const s3 = S3Provider;
+
   if (!inTest) {
     server.httpServer = app.listen(
       port,
-      () => logger.info(`Server is running at http://localhost:${port}/`)
+      () => {
+        logger.info(`Server is running at http://localhost:${port}/`);
+        logger.info(`AWS VERSION :: ${s3.config.apiVersion}`);
+      }
     );
   }
   return app;

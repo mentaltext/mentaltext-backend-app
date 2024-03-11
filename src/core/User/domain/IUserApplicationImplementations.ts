@@ -8,3 +8,6 @@ export type TSaveUser = (userRepository: IUserRepository) => SaveUser;
 
 export type FindUser = (criteria: Filter<IUserBase>[]) => Promise<Nullable<IUserBase>>
 export type TFindUser = (userRepository: IUserRepository) => FindUser;
+
+export type UpdateUser = (user: IUserBase) => Promise<IUserBase>
+export type TUpdateUser = (userRepository: IUserRepository) => UpdateUser;
