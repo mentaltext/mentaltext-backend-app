@@ -11,6 +11,9 @@ import { ensurePhonePrefix } from "@/shared/utils/ensurePhonePrefix";
 export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLogger, SaveUserImp, FindUserImp, UpdateUserImp) => async (req) => {
   try {
     const { phoneCode, phoneNumber } = req.body;
+    if (phoneNumber === undefined || phoneNumber === "" || phoneCode === undefined || phoneCode === "") {
+      throw new Error("Phone code and phone number are required");
+    }
 
     let user: Nullable<IUserBase> = await FindUserImp([
       {
@@ -34,12 +37,11 @@ export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLo
       };
 
       await SaveUserImp(user);
-      await sendSMS(ensurePhonePrefix(user.phoneNumber), `[MENTALTEX] Tu código de validación es: ${user.temporaryCode}`);
     } else {
       user.temporaryCode = generarNumeroAleatorio(5);
       await UpdateUserImp(user);
     }
-
+    await sendSMS(ensurePhonePrefix(user.phoneNumber), `[MENTALTEX] Tu código de validación es: ${user.temporaryCode}`);
     return ResponseLogger(StatusCodes.OK, "Phone validated", {
       ...user,
       temporaryCode: "",
