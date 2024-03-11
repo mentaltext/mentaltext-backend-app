@@ -18,13 +18,13 @@ export const UserCreateProfile: TUserCreateProfile =
         },
       ]);
 
-      // if (usernameExists) {
-      //   return ResponseLogger(
-      //     StatusCodes.BAD_REQUEST,
-      //     "Username already exists",
-      //     null
-      //   );
-      // }
+      if (usernameExists) {
+        return ResponseLogger(
+          StatusCodes.BAD_REQUEST,
+          "Username already exists",
+          null
+        );
+      }
 
       let user: Nullable<IUserBase> = await FindUserImp([
         {
