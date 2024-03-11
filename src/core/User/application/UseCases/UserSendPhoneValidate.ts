@@ -5,6 +5,8 @@ import { IUserBase } from "../../domain/IUser";
 import { Nullable } from "@/shared/Types/TNullable";
 import { generarNumeroAleatorio } from "@/shared/utils/RandomNumber";
 import { randomUUID } from "crypto";
+import { sendSMS } from "@/shared/providers/PhoneMessaging/infraestructure/Twilio";
+import { ensurePhonePrefix } from "@/shared/utils/ensurePhonePrefix";
 
 export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLogger, SaveUserImp, FindUserImp, UpdateUserImp) => async (req) => {
   try {
@@ -32,6 +34,7 @@ export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLo
       };
 
       await SaveUserImp(user);
+      await sendSMS(ensurePhonePrefix(user.phoneNumber), `[MENTALTEX] Tu código de validación es: ${user.temporaryCode}`);
     } else {
       user.temporaryCode = generarNumeroAleatorio(5);
       await UpdateUserImp(user);
