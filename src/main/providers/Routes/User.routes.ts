@@ -2,7 +2,8 @@ import { Request, Response, Router } from "express";
 import { UserCasesContainer } from "@/core/User/infraestructure/containers/UserCasesContainer";
 import { UserSendPhoneValidateDto } from "@/core/User/infraestructure/DTOs/UserSendPhoneValidate";
 import { UserCodePhoneValidateDto } from "@/core/User/infraestructure/DTOs/UserCodePhoneValidate";
-
+import { UserCreateProfileDto } from "@/core/User/infraestructure/DTOs/UserCreateProfile";
+import { UploadFileHandler } from "@/main/providers/MulterProvider";
 export const register = (router: Router) => {
   if (process.env.NODE_ENV !== "prod") {
     router.get("/err", function (_, __, ___) {
@@ -34,4 +35,5 @@ export const register = (router: Router) => {
   }
   router.post("/user/send-phone-validate", UserSendPhoneValidateDto, (req: Request, res: Response) => UserCasesContainer.userSendPhoneValidateUserCase(req, res));
   router.post("/user/code-phone-validate", UserCodePhoneValidateDto, (req: Request, res: Response) => UserCasesContainer.userCodePhoneValidateUserCase(req, res));
+  router.post("/user/create-profile", UploadFileHandler, UserCreateProfileDto, (req: Request, res: Response) => UserCasesContainer.userCreateProfile(req, res));
 };

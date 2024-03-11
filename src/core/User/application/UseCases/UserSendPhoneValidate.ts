@@ -4,6 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import { IUserBase } from "../../domain/IUser";
 import { Nullable } from "@/shared/Types/TNullable";
 import { generarNumeroAleatorio } from "@/shared/utils/RandomNumber";
+import { randomUUID } from "crypto";
 
 export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLogger, SaveUserImp, FindUserImp, UpdateUserImp) => async (req) => {
   try {
@@ -21,10 +22,11 @@ export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLo
       user = {
         name: "",
         language: "",
+        username: randomUUID(),
         phoneNumber,
         phoneCode,
-        temporaryCode: generarNumeroAleatorio(5),
         profilePhoto: "",
+        temporaryCode: generarNumeroAleatorio(5),
         createdAt: new Date(),
         updatedAt: new Date(),
       };
