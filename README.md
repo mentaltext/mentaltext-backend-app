@@ -23,33 +23,37 @@
 |   |-- SECURITY.md
 |   |-- src
 |   |   |-- core
-|   |       |-- User
-|   |       |   |-- application
-|   |       |   |   |-- repositoryImplementations
-|   |       |   |   |   |-- FindUser.ts
-|   |       |   |   |   |-- SaveUser.ts
-|   |       |   |       |-- UpdateUser.ts
-|   |       |       |-- UseCases
-|   |       |       |   |-- UserCodePhoneValidate.ts
-|   |       |       |   |-- UserCreateProfile.ts
-|   |       |           |-- UserSendPhoneValidate.ts
-|   |       |   |-- domain
-|   |       |   |   |-- IUser.ts
-|   |       |   |   |-- IUserApplicationImplementations.ts
-|   |       |   |   |-- IUserApplicationUserCases.ts
-|   |       |   |   |-- IUserRepository.ts
-|   |       |       |-- UserBodyRequest.ts
-|   |           |-- infraestructure
-|   |           |   |-- containers
-|   |           |   |   |-- UserCasesContainer.ts
-|   |           |       |-- UserRespositorysContainer.ts
-|   |           |   |-- DTOs
-|   |           |   |   |-- UserCodePhoneValidate.ts
-|   |           |       |-- UserSendPhoneValidate.ts
-|   |           |   |-- repositorys
-|   |           |       |-- PrismaUserRepository.ts
-|   |               |-- strategys
-|   |                   |-- UserJwt.ts
+|   |   |   |-- User
+|   |   |   |   |-- application
+|   |   |   |   |   |-- repositoryImplementations
+|   |   |   |   |   |   |-- FindUser.ts
+|   |   |   |   |   |   |-- SaveUser.ts
+|   |   |   |   |       |-- UpdateUser.ts
+|   |   |   |       |-- UseCases
+|   |   |   |       |   |-- UserCodePhoneValidate.ts
+|   |   |   |       |   |-- UserCreateProfile.ts
+|   |   |   |           |-- UserSendPhoneValidate.ts
+|   |   |   |   |-- domain
+|   |   |   |   |   |-- IUser.ts
+|   |   |   |   |   |-- IUserApplicationImplementations.ts
+|   |   |   |   |   |-- IUserApplicationUserCases.ts
+|   |   |   |   |   |-- IUserRepository.ts
+|   |   |   |       |-- UserBodyRequest.ts
+|   |   |       |-- infraestructure
+|   |   |       |   |-- containers
+|   |   |       |   |   |-- UserCasesContainer.ts
+|   |   |       |       |-- UserRespositorysContainer.ts
+|   |   |       |   |-- DTOs
+|   |   |       |   |   |-- UserCodePhoneValidate.ts
+|   |   |       |   |   |-- UserCreateProfile.ts
+|   |   |       |       |-- UserSendPhoneValidate.ts
+|   |   |       |   |-- repositorys
+|   |   |       |       |-- PrismaUserRepository.ts
+|   |   |           |-- strategys
+|   |   |               |-- UserJwt.ts
+|   |       |-- UserProfile
+|   |           |-- domain
+|   |               |-- IUserProfile.ts
 |   |   |-- lib
 |   |       |-- cli-genetator-files
 |   |       |   |-- index.mts
@@ -58,21 +62,32 @@
 |   |   |   |-- env.d.ts
 |   |       |-- providers
 |   |       |   |-- ApplicationProvider.ts
+|   |       |   |-- AwsProvider.ts
 |   |       |   |-- ErrorHandlerProvider.ts
 |   |       |   |-- LocalsProvider.ts
 |   |       |   |-- MiddlewaresProvider.ts
+|   |       |   |-- MulterProvider.ts
 |   |       |   |-- PrismaProvider.ts
 |   |       |   |-- RouterProvider.ts
 |   |           |-- Routes
 |   |               |-- User.routes.ts
 |   |   |-- server.ts
 |       |-- shared
+|       |   |-- constants
+|       |       |-- CommonConstants.ts
 |       |   |-- CustomErrors
 |       |       |-- CustomErrors.ts
 |       |   |-- PassportProvider
 |       |       |-- infraestructure
 |       |           |-- passportConfig.ts
 |       |   |-- providers
+|       |   |   |-- FileUploader
+|       |   |   |   |-- application
+|       |   |   |       |-- FileRepository.ts
+|       |   |   |   |-- domain
+|       |   |   |       |-- IFileRepository.ts
+|       |   |       |-- infraestructure
+|       |   |           |-- FileContainer.ts
 |       |   |   |-- HashProvider
 |       |   |   |   |-- domain
 |       |   |   |       |-- IHashProvider.ts
