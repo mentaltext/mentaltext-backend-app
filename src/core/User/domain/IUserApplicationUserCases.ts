@@ -13,6 +13,7 @@ import {
   TUserSendPhoneValidateReqBody,
 } from "./UserBodyRequest";
 import { TUploadFile } from "@/shared/providers/FileUploader/domain/IFileRepository";
+import { SaveUserProfile } from "@/core/UserProfile/domain/IUserProfileApplicationImplementations";
 
 type EndpointHandler<T extends unknown[], ReqBody = unknown> = (
   ResponserProvider: TResponseLoggerImp,
@@ -30,6 +31,6 @@ export type TUserCodePhoneValidateUserCase = EndpointHandler<
   TUserCodePhoneValidateReqBody
 >;
 export type TUserCreateProfile = EndpointHandler<
-  [FindUser, UpdateUser, TUploadFile],
+  [FindUser, UpdateUser, TUploadFile, SaveUserProfile],
   TUserCreateProfileReqBody
 >;

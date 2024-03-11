@@ -7,8 +7,14 @@ export const PrismaUserRepository = (
   client: PrismaClient
 ): IUserRepository => ({
   async save(user) {
-    const nUser = await client.user.create({
-      data: {
+    const nUser = await client.user.upsert({
+      where: {
+        phoneNumber: user.phoneNumber,
+      },
+      update: {
+        ...user,
+      },
+      create: {
         ...user,
       },
     });
@@ -20,7 +26,7 @@ export const PrismaUserRepository = (
       throw new Error("Invalid input: criteria must be an array of Filters");
     }
     const user = await client.user.findFirst({
-      where: criteriaConverter(criteria),
+      where: criteriaConverter(criteria)
     });
 
     if (!user) {

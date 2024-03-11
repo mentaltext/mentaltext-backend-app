@@ -40,13 +40,13 @@ model UserProfile {
   bio         String
   lastSeen    DateTime
   status      UserStatus
-  user        User       @relation(fields: [phoneNumber], references: [phoneNumber])
+  user        User       @relation(fields: [phoneNumber], references: [phoneNumber], onDelete: Cascade)
 }
 
 model UserSettings {
   userId               String  @id
   notificationsEnabled Boolean
-  user                 User    @relation(fields: [userId], references: [phoneNumber])
+  user                 User    @relation(fields: [userId], references: [phoneNumber], onDelete: Cascade)
 }
 
 model Chat {
@@ -65,14 +65,14 @@ model ChatSettings {
   updatedAt DateTime
   updatedBy String
   chat      Chat     @relation(fields: [chatId], references: [id])
-  user      User     @relation(fields: [updatedBy], references: [phoneNumber])
+  user      User     @relation(fields: [updatedBy], references: [phoneNumber], onDelete: Cascade)
 }
 
 model ChatParticipants {
   chatId String
   userId String
   chat   Chat   @relation(fields: [chatId], references: [id])
-  user   User   @relation(fields: [userId], references: [phoneNumber])
+  user   User   @relation(fields: [userId], references: [phoneNumber], onDelete: Cascade)
 
   @@id([chatId, userId])
 }
@@ -86,7 +86,7 @@ model Message {
   createdAt DateTime
   themes    String[]
   chat      Chat     @relation(fields: [chatId], references: [id])
-  owner     User     @relation(fields: [ownerId], references: [phoneNumber])
+  owner     User     @relation(fields: [ownerId], references: [phoneNumber], onDelete: Cascade)
 
   messageStatus    MessageStatus[]
   favoriteMessages FavoriteMessages[]
@@ -102,8 +102,8 @@ model RetainedMessages {
   type      String
   createdAt DateTime
   status    String
-  chat      Chat     @relation(fields: [chatId], references: [id])
-  owner     User     @relation(fields: [ownerId], references: [phoneNumber])
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  owner     User     @relation(fields: [ownerId], references: [phoneNumber], onDelete: Cascade)
 
   @@id([id])
 }
@@ -113,8 +113,8 @@ model MessageStatus {
   recipientId String
   status      String
   updatedAt   DateTime
-  message     Message  @relation(fields: [messageId], references: [id])
-  recipient   User     @relation(fields: [recipientId], references: [phoneNumber])
+  message     Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  recipient   User     @relation(fields: [recipientId], references: [phoneNumber], onDelete: Cascade)
 
   @@id([messageId, recipientId])
 }

@@ -6,9 +6,9 @@ import { Nullable } from "@/shared/Types/TNullable";
 import { AWS_S3_BUCKET_NAME } from "@/shared/constants/CommonConstants";
 
 export const UserCreateProfile: TUserCreateProfile =
-  (ResponseLogger, FindUserImp, UpdateUserImp, UploadImage) => async (req) => {
+  (ResponseLogger, FindUserImp, UpdateUserImp, UploadImage, UserProfileCreateImp) => async (req) => {
     try {
-      const { phoneNumber, name, username, language } = req.body;
+      const { phoneNumber, name, username, language, bio } = req.body;
       const profilePhoto = req.file;
       const usernameExists: Nullable<IUserBase> = await FindUserImp([
         {
@@ -18,13 +18,13 @@ export const UserCreateProfile: TUserCreateProfile =
         },
       ]);
 
-      if (usernameExists) {
-        return ResponseLogger(
-          StatusCodes.BAD_REQUEST,
-          "Username already exists",
-          null
-        );
-      }
+      // if (usernameExists) {
+      //   return ResponseLogger(
+      //     StatusCodes.BAD_REQUEST,
+      //     "Username already exists",
+      //     null
+      //   );
+      // }
 
       let user: Nullable<IUserBase> = await FindUserImp([
         {
@@ -48,6 +48,12 @@ export const UserCreateProfile: TUserCreateProfile =
         language: language || "es",
         updatedAt: new Date(),
       };
+      UserProfileCreateImp({
+        phoneNumber: user.phoneNumber,
+        bio: bio || "",
+        lastSeen: new Date(),
+        status: "ONLINE"
+      });
 
       await UpdateUserImp(user);
 

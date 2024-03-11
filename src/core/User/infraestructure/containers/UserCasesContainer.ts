@@ -5,9 +5,11 @@ import { UserSendPhoneValidate } from "../../application/UseCases/UserSendPhoneV
 import { UserCodePhoneValidate } from "../../application/UseCases/UserCodePhoneValidate";
 import { FileRespositorysContainer } from "@/shared/providers/FileUploader/infraestructure/FileContainer";
 import { UserCreateProfile } from "../../application/UseCases/UserCreateProfile";
+import { UserProfileRespositorysContainer } from "@/core/UserProfile/infraestructure/containers/UserProfileRespositorysContainer";
 
 const { findUserImp, saveUserImp, updateUserImp } = UserRespositorysContainer;
 const { uploadImage } = FileRespositorysContainer;
+const { saveUserProfileImp } = UserProfileRespositorysContainer;
 
 export const UserCasesContainer = {
   userSendPhoneValidateUserCase: (req: Request, res: Response) =>
@@ -28,6 +30,7 @@ export const UserCasesContainer = {
       ResponseProvider(res),
       findUserImp,
       updateUserImp,
-      uploadImage
+      uploadImage,
+      saveUserProfileImp
     )(req),
 };
