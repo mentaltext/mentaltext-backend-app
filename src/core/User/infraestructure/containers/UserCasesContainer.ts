@@ -3,8 +3,11 @@ import { Request, Response } from "express";
 import { UserRespositorysContainer } from "./UserRespositorysContainer";
 import { UserSendPhoneValidate } from "../../application/UseCases/UserSendPhoneValidate";
 import { UserCodePhoneValidate } from "../../application/UseCases/UserCodePhoneValidate";
+import { FileRespositorysContainer } from "@/shared/providers/FileUploader/infraestructure/FileContainer";
+import { UserCreateProfile } from "../../application/UseCases/UserCreateProfile";
 
 const { findUserImp, saveUserImp, updateUserImp } = UserRespositorysContainer;
+const { uploadImage } = FileRespositorysContainer;
 
 export const UserCasesContainer = {
   userSendPhoneValidateUserCase: (req: Request, res: Response) =>
@@ -19,5 +22,12 @@ export const UserCasesContainer = {
       ResponseProvider(res),
       findUserImp,
       updateUserImp
+    )(req),
+  userCreateProfile: (req: Request, res: Response) =>
+    UserCreateProfile(
+      ResponseProvider(res),
+      findUserImp,
+      updateUserImp,
+      uploadImage
     )(req),
 };
