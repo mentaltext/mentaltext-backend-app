@@ -3,6 +3,8 @@ import { ILogger } from "@/shared/providers/Logger/domain/ILogger";
 import helmet from "helmet";
 import cors from "cors";
 import compress from "compression";
+import morgan from "morgan";
+
 export const HttpMiddlewareProvider =
   (app: Application, _: ILogger) => (): Application => {
     app.all("/*", function (_, res, next) {
@@ -14,13 +16,10 @@ export const HttpMiddlewareProvider =
       res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
       res.header("Access-Control-Allow-Credentials", "true");
       res.header("Access-Control-Expose-Headers", "Content-Length");
-      res.header("Content-Type", "multipart/form-data");
       next();
     });
 
-    app.use(
-      Express.json()
-    );
+    app.use(Express.json());
 
     app.use(
       Express.urlencoded({
@@ -42,6 +41,8 @@ export const HttpMiddlewareProvider =
 
     // Activa el validador de la carga útil de la solicitud Activa la compresión "gzip" / "deflate" para la respuesta
     app.use(compress());
+
+    app.use(morgan("\x1b[34m[:method]\x1b[0m \x1b[32m:url\x1b[0m :response-time/ms \x1b[33m:status\x1b[0m"));
 
     return app;
   };

@@ -14,6 +14,7 @@ import {
 } from "./UserBodyRequest";
 import { TUploadFile } from "@/shared/providers/FileUploader/domain/IFileRepository";
 import { SaveUserProfile } from "@/core/UserProfile/domain/IUserProfileApplicationImplementations";
+import { TCreateJwtProviderImp } from "@/shared/providers/JwtProvider/domain/TJwtProvider";
 
 type EndpointHandler<T extends unknown[], ReqBody = unknown> = (
   ResponserProvider: TResponseLoggerImp,
@@ -27,7 +28,7 @@ export type TUserSendPhoneValidateUserCase = EndpointHandler<
   TUserSendPhoneValidateReqBody
 >;
 export type TUserCodePhoneValidateUserCase = EndpointHandler<
-  [FindUser, UpdateUser],
+  [FindUser, UpdateUser, TCreateJwtProviderImp],
   TUserCodePhoneValidateReqBody
 >;
 export type TUserCreateProfile = EndpointHandler<
