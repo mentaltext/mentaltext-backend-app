@@ -8,3 +8,4 @@ interface IUserBaseIUserProfileBase extends Omit<IUserBase, "profilePhoto">, IUs
 export type TUserSendPhoneValidateReqBody = Pick<IUserBase, "phoneCode" | "phoneNumber">;
 export type TUserCodePhoneValidateReqBody = Pick<IUserBase, "phoneCode" | "phoneNumber" | "temporaryCode">;
 export type TUserCreateProfileReqBody = Omit<IUserBaseIUserProfileBase, "">;
+export type TUserRefreshTokenReqBody = { refreshToken: string };

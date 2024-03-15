@@ -4,6 +4,7 @@ import { UserSendPhoneValidateDto } from "@/core/User/infraestructure/DTOs/UserS
 import { UserCodePhoneValidateDto } from "@/core/User/infraestructure/DTOs/UserCodePhoneValidate";
 import { UserCreateProfileDto } from "@/core/User/infraestructure/DTOs/UserCreateProfile";
 import { UploadFileHandler } from "@/main/providers/MulterProvider";
+import { UserRefresTokenDto } from "@/core/User/infraestructure/DTOs/UserRefreshToken";
 export const register = (router: Router) => {
   if (process.env.NODE_ENV !== "prod") {
     router.get("/err", function (_, __, ___) {
@@ -35,5 +36,6 @@ export const register = (router: Router) => {
   }
   router.post("/user/send-phone-validate", UserSendPhoneValidateDto, (req: Request, res: Response) => UserCasesContainer.userSendPhoneValidateUserCase(req, res));
   router.post("/user/code-phone-validate", UserCodePhoneValidateDto, (req: Request, res: Response) => UserCasesContainer.userCodePhoneValidateUserCase(req, res));
+  router.post("/user/refresh-token", UserRefresTokenDto, (req: Request, res: Response) => UserCasesContainer.userRefreshToken(req, res));
   router.post("/user/create-profile", UploadFileHandler, UserCreateProfileDto, (req: Request, res: Response) => UserCasesContainer.userCreateProfile(req, res));
 };

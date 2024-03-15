@@ -36,7 +36,7 @@ export const UserCodePhoneValidate: TUserCodePhoneValidateUserCase =
       expToken.setHours(expToken.getHours() + 24);
 
       const { refreshToken, token } = await JwtCreateImp({
-        id: user.phoneNumber,
+        phoneNumber: user.phoneNumber,
         iat: Date.now(),
         exp: expToken.getTime(),
       });

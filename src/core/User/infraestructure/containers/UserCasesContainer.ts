@@ -7,6 +7,8 @@ import { FileRespositorysContainer } from "@/shared/providers/FileUploader/infra
 import { UserCreateProfile } from "../../application/UseCases/UserCreateProfile";
 import { UserProfileRespositorysContainer } from "@/core/UserProfile/infraestructure/containers/UserProfileRespositorysContainer";
 import { CreateJwtProvider } from "@/shared/providers/JwtProvider/infraestructure/JwtProvider";
+import { UserRefreshToken } from "../../application/UseCases/UserRefreshToken";
+import { decode } from "jsonwebtoken";
 
 const { findUserImp, saveUserImp, updateUserImp } = UserRespositorysContainer;
 const { uploadImage } = FileRespositorysContainer;
@@ -37,4 +39,6 @@ export const UserCasesContainer = {
       uploadImage,
       saveUserProfileImp
     )(req),
+  userRefreshToken: (req: Request, res: Response) =>
+    UserRefreshToken(ResponseProvider(res), decode, jwtImp, findUserImp)(req),
 };

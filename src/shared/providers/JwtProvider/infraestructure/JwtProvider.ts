@@ -5,7 +5,8 @@ import { config } from "@/main/providers/LocalsProvider";
 export const CreateJwtProvider: TCreateJwtProvider =
   () => (object, options?) => {
     const expToken = new Date();
-    expToken.setHours(expToken.getMonth() + 2);
+    expToken.setMonth(expToken.getMonth() + 2);
+
     const refreshToken = sign(
       {
         ...object,

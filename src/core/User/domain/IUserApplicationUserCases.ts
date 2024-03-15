@@ -1,3 +1,4 @@
+import { TUserRefreshTokenReqBody } from "./UserBodyRequest";
 import { TResponseLoggerImp } from "@/shared/providers/Response/domain/IResponse";
 import {
   SaveUser,
@@ -14,7 +15,7 @@ import {
 } from "./UserBodyRequest";
 import { TUploadFile } from "@/shared/providers/FileUploader/domain/IFileRepository";
 import { SaveUserProfile } from "@/core/UserProfile/domain/IUserProfileApplicationImplementations";
-import { TCreateJwtProviderImp } from "@/shared/providers/JwtProvider/domain/TJwtProvider";
+import { DecodeInterface, TCreateJwtProviderImp } from "@/shared/providers/JwtProvider/domain/TJwtProvider";
 
 type EndpointHandler<T extends unknown[], ReqBody = unknown> = (
   ResponserProvider: TResponseLoggerImp,
@@ -35,3 +36,4 @@ export type TUserCreateProfile = EndpointHandler<
   [FindUser, UpdateUser, TUploadFile, SaveUserProfile],
   TUserCreateProfileReqBody
 >;
+export type TUserRefreshTokenUserCase = EndpointHandler<[DecodeInterface, TCreateJwtProviderImp, FindUser], TUserRefreshTokenReqBody>;
