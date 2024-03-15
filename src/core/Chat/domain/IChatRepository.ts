@@ -6,4 +6,3 @@ import { Nullable } from "@/shared/Types/TNullable";
       save(user: IChatBase): Promise<GetResult<IChatBase, { [x: string]: () => unknown; }>>;
       find(criteria: Filter<IChatBase>[]): Promise<Nullable<IChatBase>>;
   }
-  
