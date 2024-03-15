@@ -14,6 +14,7 @@
     "prisma:push": "prisma db push",
     "compile": "tsc",
     "cli-generator": "npm run compile && node ./dist/lib/cli-genetator-files/index.mjs",
+    "cli-generator-module": "npm run compile && node ./dist/lib/cli-genetator-core-module/index.mjs",
     "generate-markdown-tree": "node scripts/MarkdownGenerateTree.js"
   },
   "keywords": [],
