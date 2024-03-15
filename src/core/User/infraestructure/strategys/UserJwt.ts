@@ -15,10 +15,13 @@ export const UserJwt = (UserFind: FindUser) => new JwtStrategy(userOptions, asyn
     const user = await UserFind([
       {
         field: "phoneNumber",
-        value: jwtPayload.id,
+        value: jwtPayload.phoneNumber,
         operator: operatorEnum.EQUAL
       }
     ]);
+    if (jwtPayload.phoneNumber !== user?.phoneNumber) {
+      return done(null, false);
+    }
     if (user) {
       return done(null, user);
     }
