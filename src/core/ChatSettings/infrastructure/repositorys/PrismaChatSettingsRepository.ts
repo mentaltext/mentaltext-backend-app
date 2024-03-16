@@ -7,14 +7,8 @@ import { IChatSettingsBase } from "../../domain/IChatSettings";
     client: PrismaClient
   ): IChatSettingsRepository => ({
     async save(user) {
-      const nUser = await client.chatSettings.upsert({
-        where: {
-          id: user.id,
-        },
-        update: {
-          ...user,
-        },
-        create: {
+      const nUser = await client.chatSettings.create({
+         data: {
           ...user,
         },
       });

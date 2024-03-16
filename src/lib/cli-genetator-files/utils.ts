@@ -49,7 +49,7 @@ export const modifyIUserApplicationUserCases = (
     "../../../src/core",
     moduleToGenerate,
     "domain",
-    "IUserApplicationUserCases.ts"
+    `I${moduleToGenerate}ApplicationUserCases.ts`
   );
 
   const typeReqBodyModuleName = `T${moduleToGenerate}${newModuleName}ReqBody`;
