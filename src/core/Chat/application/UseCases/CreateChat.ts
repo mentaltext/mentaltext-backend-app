@@ -1,12 +1,12 @@
 import { operatorEnum } from "@/shared/Types/IFilter";
 import { TCreateChatUseCase } from "../../domain/IChatApplicationUserCases";
 import { StatusCodes } from "http-status-codes";
-import { IChatBase } from "../../domain/IChat";
+// import { IChatBase } from "../../domain/IChat";
 import { Nullable } from "@/shared/Types/TNullable";
 import { IUserBase } from "@/core/User/domain/IUser";
 
 export const CreateChat: TCreateChatUseCase =
-  (ResponseLogger, CreateChatImp, FindUserImp) => async (req) => {
+  (ResponseLogger, _, FindUserImp) => async (req) => {
     try {
       const { chatParticipant, chatParticipantTwo } = req.body;
       const userOne: Nullable<IUserBase> = await FindUserImp([
@@ -31,6 +31,10 @@ export const CreateChat: TCreateChatUseCase =
       if (!userTwo) {
         throw new Error(`User with phone number ${chatParticipantTwo} not found`);
       }
+
+      // const chat: IChatBase = await CreateChatImp({
+      //   lastConnectionId: ""
+      // });
 
       return ResponseLogger(StatusCodes.OK, "Phone validated", {
         temporaryCode: "",

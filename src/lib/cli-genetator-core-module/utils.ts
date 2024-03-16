@@ -8,6 +8,7 @@ export const createModuleStructure = (fs, path, newModuleName, pk) => {
     `${filePath}/${newModuleName}/application/repositoryImplementations`,
     { recursive: true }
   );
+  saveModel(fs, path, newModuleName);
   fs.mkdirSync(`${filePath}/${newModuleName}/application/UseCases`, {
     recursive: true,
   });
@@ -15,6 +16,7 @@ export const createModuleStructure = (fs, path, newModuleName, pk) => {
   fs.mkdirSync(`${filePath}/${newModuleName}/domain`, { recursive: true });
   createInterfaceBase(fs, path, newModuleName);
   createDomaiRepository(fs, path, newModuleName);
+  ApplicationImplementations(fs, path, newModuleName);
 
   fs.mkdirSync(`${filePath}/${newModuleName}/infrastructure`, {
     recursive: true,
@@ -152,6 +154,61 @@ const createInterfaceBase = (fs, path, newModuleName) => {
 
   export type I${newModuleName}Base = ${newModuleName};
 
+  `;
+
+  fs.writeFileSync(filePath, fileContent);
+
+  console.log(`[+] Archivo ${fileName} creado en ${modulePath}`);
+};
+
+const saveModel = (fs, path, newModuleName) => {
+  const modulePath = path.join(
+    __dirname,
+    "../../../src/core",
+    newModuleName,
+    "application",
+    "repositoryImplementations"
+  );
+
+  const fileName = `Save${newModuleName}.ts`;
+  const filePath = path.join(modulePath, fileName);
+
+  const fileContent = `import { TSave${newModuleName} } from "../../domain/I${newModuleName}ApplicationImplementations";
+
+  export const Save${newModuleName}: TSave${newModuleName} = (repository) => async (${newModuleName}) => {
+      return await repository.save(${newModuleName});
+  };
+
+  `;
+  fs.writeFileSync(filePath, fileContent);
+
+  console.log(`[+] Archivo ${fileName} creado en ${modulePath}`);
+};
+
+const ApplicationImplementations = (fs, path, newModuleName) => {
+  const modulePath = path.join(
+    __dirname,
+    "../../../src/core",
+    newModuleName,
+    "domain"
+  );
+
+  const fileName = `I${newModuleName}ApplicationImplementations.ts`;
+  const filePath = path.join(modulePath, fileName);
+
+  const fileContent = `import { Filter } from "@/shared/Types/IFilter";
+  import { I${newModuleName}Base } from "./I${newModuleName}";
+  import { I${newModuleName}Repository } from "./I${newModuleName}Repository";
+  import { Nullable } from "@/shared/Types/TNullable";
+
+  export type Save${newModuleName} =(user: I${newModuleName}Base) => Promise<I${newModuleName}Base>
+  export type TSave${newModuleName} = (userRepository: I${newModuleName}Repository) => Save${newModuleName};
+
+  export type Find${newModuleName} = (criteria: Filter<I${newModuleName}Base>[]) => Promise<Nullable<I${newModuleName}Base>>
+  export type TFind${newModuleName} = (userRepository: I${newModuleName}Repository) => Find${newModuleName};
+
+  export type Update${newModuleName} = (user: I${newModuleName}Base) => Promise<I${newModuleName}Base>
+  export type TUpdate${newModuleName} = (userRepository: I${newModuleName}Repository) => Update${newModuleName};
   `;
 
   fs.writeFileSync(filePath, fileContent);

@@ -50,7 +50,7 @@ model UserSettings {
 }
 
 model Chat {
-  id               String             @id
+  id               String             @id @default(uuid())
   lastConnectionId String?
   chatSettings     ChatSettings[]
   participants     ChatParticipants[]
@@ -154,7 +154,7 @@ model GroupParticipants {
 }
 
 model BlockedUsers {
-  id        String
+  id        String   @default(uuid())
   blockerId String
   blockedId String
   createdAt DateTime
@@ -166,7 +166,7 @@ model BlockedUsers {
 }
 
 model Connections {
-  id         String
+  id         String   @default(uuid())
   chatId     String
   occurredAt DateTime
   chat       Chat     @relation(fields: [chatId], references: [id])
