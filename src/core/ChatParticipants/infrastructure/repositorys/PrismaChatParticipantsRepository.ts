@@ -1,13 +1,13 @@
 import { PrismaClient } from "@prisma/client";
-  import { IChatSettingsRepository } from "@/core/ChatSettings/domain/IChatSettingsRepository";
+  import { IChatParticipantsRepository } from "@/core/ChatParticipants/domain/IChatParticipantsRepository";
   import { Filter, operatorEnum } from "@/shared/Types/IFilter";
-import { IChatSettingsBase } from "../../domain/IChatSettings";
+import { IChatParticipantsBase } from "../../domain/IChatParticipants";
 
-  export const PrismaChatSettingsRepository = (
+  export const PrismaChatParticipantsRepository = (
     client: PrismaClient
-  ): IChatSettingsRepository => ({
+  ): IChatParticipantsRepository => ({
     async save(user) {
-      const nUser = await client.chatSettings.create({
+      const nUser = await client.chatParticipants.create({
         data: {
           ...user,
         },
@@ -19,26 +19,26 @@ import { IChatSettingsBase } from "../../domain/IChatSettings";
       if (!Array.isArray(criteria) || !criteria.every(isFilter)) {
         throw new Error("Invalid input: criteria must be an array of Filters");
       }
-      const ChatSettings = await client.chatSettings.findFirst({
+      const ChatParticipants = await client.chatParticipants.findFirst({
         where: criteriaConverter(criteria)
       });
 
-      if (!ChatSettings) {
+      if (!ChatParticipants) {
         return null;
       }
-      return ChatSettings;
+      return ChatParticipants;
     },
   });
 
 
-const isFilter = (obj: Filter<IChatSettingsBase>): obj is Filter<IChatSettingsBase> =>
+const isFilter = (obj: Filter<IChatParticipantsBase>): obj is Filter<IChatParticipantsBase> =>
 typeof obj === "object" &&
 obj !== null &&
 typeof obj.field === "string" &&
 typeof obj.value === "string" &&
 (obj.operator === operatorEnum.EQUAL);
 
-const criteriaConverter = (criteria: Filter<IChatSettingsBase>[]) => {
+const criteriaConverter = (criteria: Filter<IChatParticipantsBase>[]) => {
 return criteria.reduce(
   (acc, filter) => ({
     ...acc,
