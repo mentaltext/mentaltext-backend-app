@@ -4,4 +4,3 @@ import { TSaveChatParticipants } from "../../domain/IChatParticipantsApplication
       return await repository.save(ChatParticipants);
   };
 
-  
