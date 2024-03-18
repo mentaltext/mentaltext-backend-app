@@ -5,11 +5,18 @@ import { Nullable } from "@/shared/Types/TNullable";
 import { IUserBase } from "@/core/User/domain/IUser";
 import { IChatBase } from "../../domain/IChat";
 import { v4 as uuidv4 } from "uuid";
-
-const myuuid = uuidv4();
+import { PrismaProvider } from "@/main/providers/PrismaProvider";
 
 export const CreateChat: TCreateChatUseCase =
-  (ResponseLogger, CreateChatImp, FindUserImp, SaveChatParticipantsImp, SaveChatSettingsImp) => async (req) => {
+  (
+    ResponseLogger,
+    CreateChatImp,
+    FindUserImp,
+    SaveChatParticipantsImp,
+    SaveChatSettingsImp,
+    FindChatParticipantsImp
+  ) =>
+  async (req) => {
     try {
       const { chatParticipant, chatParticipantTwo } = req.body;
       const userOne: Nullable<IUserBase> = await FindUserImp([
@@ -36,9 +43,43 @@ export const CreateChat: TCreateChatUseCase =
           `User with phone number ${chatParticipantTwo} not found`
         );
       }
-      const generatedUid = myuuid;
+
+      // Busqueda de chat existente entre los dos usuarios
+
+      const existingChatParticipantOne = await FindChatParticipantsImp([
+        {
+          field: "userId",
+          value: userOne.phoneNumber,
+          operator: operatorEnum.EQUAL,
+        },
+      ]);
+      if (existingChatParticipantOne) {
+        const chatsForUserOne = await PrismaProvider.chatParticipants.findMany({
+          where: { userId: userOne.phoneNumber },
+          select: { chatId: true },
+        });
+
+        const chatIdsForUserOne = chatsForUserOne.map((cp) => cp.chatId);
+        const commonChatWithUserTwo =
+          await PrismaProvider.chatParticipants.findFirst({
+            where: {
+              AND: [
+                { chatId: { in: chatIdsForUserOne } },
+                { userId: userTwo.phoneNumber },
+              ],
+            },
+          });
+
+        if (commonChatWithUserTwo) {
+          return ResponseLogger(StatusCodes.OK, "Chat already exists", {
+            chatId: commonChatWithUserTwo.chatId,
+          });
+        }
+      }
+      // Fin Busqueda de chat existente entre los dos usuarios
+
       const chat: IChatBase = await CreateChatImp({
-        id: generatedUid,
+        id: uuidv4(),
         lastConnectionId: "",
       });
 

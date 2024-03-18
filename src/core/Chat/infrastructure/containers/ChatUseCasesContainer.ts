@@ -8,7 +8,7 @@ import { ChatSettingsRespositorysContainer } from "@/core/ChatSettings/infrastru
 
 const { saveChatImp } = ChatRespositorysContainer;
 const { findUserImp } = UserRespositorysContainer;
-const { saveChatParticipantsImp } = ChatParticipantsRespositorysContainer;
+const { saveChatParticipantsImp, findChatParticipantsImp } = ChatParticipantsRespositorysContainer;
 const { saveChatSettingsImp } = ChatSettingsRespositorysContainer;
 
 export const ChatUseCasesContainer = {
@@ -18,6 +18,7 @@ export const ChatUseCasesContainer = {
       saveChatImp,
       findUserImp,
       saveChatParticipantsImp,
-      saveChatSettingsImp
+      saveChatSettingsImp,
+      findChatParticipantsImp
     )(req),
 };
