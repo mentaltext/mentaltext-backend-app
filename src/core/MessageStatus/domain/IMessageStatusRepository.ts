@@ -6,4 +6,3 @@ import { Nullable } from "@/shared/Types/TNullable";
       save(user: IMessageStatusBase): Promise<GetResult<IMessageStatusBase, { [x: string]: () => unknown; }>>;
       find(criteria: Filter<IMessageStatusBase>[]): Promise<Nullable<IMessageStatusBase>>;
   }
-  

@@ -4,4 +4,3 @@ import { TSaveMessageStatus } from "../../domain/IMessageStatusApplicationImplem
       return await repository.save(MessageStatus);
   };
 
-  

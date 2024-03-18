@@ -11,4 +11,3 @@ import { Filter } from "@/shared/Types/IFilter";
 
   export type UpdateMessageStatus = (user: IMessageStatusBase) => Promise<IMessageStatusBase>
   export type TUpdateMessageStatus = (userRepository: IMessageStatusRepository) => UpdateMessageStatus;
-  
