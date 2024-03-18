@@ -11,4 +11,3 @@ import { Filter } from "@/shared/Types/IFilter";
 
   export type UpdateRetainedMessages = (user: IRetainedMessagesBase) => Promise<IRetainedMessagesBase>
   export type TUpdateRetainedMessages = (userRepository: IRetainedMessagesRepository) => UpdateRetainedMessages;
-  

@@ -4,4 +4,3 @@ import { TSaveRetainedMessages } from "../../domain/IRetainedMessagesApplication
       return await repository.save(RetainedMessages);
   };
 
-  
