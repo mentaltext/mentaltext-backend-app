@@ -6,7 +6,7 @@ import { MessageGetMessages } from "../../application/UseCases/MessageGetMessage
 
 export const messageUseCasesContainer = {
   sendMessageUseCase: (req: Request, res: Response) =>
-    SendMessage(ResponseProvider(res))(req),
+    SendMessage(ResponseProvider(res))(req as any),
   getMessagesUseCase: (req: Request, res: Response) =>
     MessageGetMessages(ResponseProvider(res))(req as any),
 };
