@@ -62,4 +62,11 @@ export const register = (router: Router) => {
       UserCasesContainer.userCreateProfile(req, res);
     }
   );
+  router.get(
+    "/user/profile",
+    passportUserMiddleware,
+    async (req: Request, res: Response) => {
+      UserCasesContainer.userGetProfile(req, res);
+    }
+  );
 };

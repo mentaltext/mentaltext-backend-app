@@ -1,4 +1,4 @@
-import { TUserRefreshTokenReqBody } from "./UserBodyRequest";
+import { TUserRefreshTokenReqBody, TUserGetProfileReqBody } from "./UserBodyRequest";
 import { TResponseLoggerImp } from "@/shared/providers/Response/domain/IResponse";
 import {
   SaveUser,
@@ -16,12 +16,13 @@ import {
 import { TUploadFile } from "@/shared/providers/FileUploader/domain/IFileRepository";
 import { SaveUserProfile } from "@/core/UserProfile/domain/IUserProfileApplicationImplementations";
 import { DecodeInterface, TCreateJwtProviderImp } from "@/shared/providers/JwtProvider/domain/TJwtProvider";
+import { IUserBase } from "./IUser";
 
-type EndpointHandler<T extends unknown[], ReqBody = unknown> = (
+type EndpointHandler<T extends unknown[], ReqBody = unknown, ExtendRequest = unknown> = (
   ResponserProvider: TResponseLoggerImp,
   ...implementations: T
 ) => (
-  req: Request<unknown, unknown, ReqBody>
+  req: Request<unknown, unknown, ReqBody> & ExtendRequest,
 ) => Promise<Response<unknown, Record<string, unknown>> | undefined>;
 
 export type TUserSendPhoneValidateUserCase = EndpointHandler<
@@ -37,3 +38,4 @@ export type TUserCreateProfile = EndpointHandler<
   TUserCreateProfileReqBody
 >;
 export type TUserRefreshTokenUserCase = EndpointHandler<[DecodeInterface, TCreateJwtProviderImp, FindUser], TUserRefreshTokenReqBody>;
+export type TUserGetProfileUserCase = EndpointHandler<[], TUserGetProfileReqBody, { user: IUserBase }>;
