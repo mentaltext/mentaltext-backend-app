@@ -58,7 +58,7 @@ model Chat {
   retainedMessages RetainedMessages[]
   connections      Connections[]
 
-  lastMessageSentAt DateTime @default(now())
+  lastMessageSentAt DateTime?
 }
 
 model ChatSettings {

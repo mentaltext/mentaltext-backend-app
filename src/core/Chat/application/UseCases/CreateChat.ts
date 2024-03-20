@@ -77,10 +77,10 @@ export const CreateChat: TCreateChatUseCase =
         }
       }
       // Fin Busqueda de chat existente entre los dos usuarios
-
       const chat: IChatBase = await CreateChatImp({
         id: uuidv4(),
         lastConnectionId: "",
+        lastMessageSentAt: null
       });
 
       const chatParticipantOne = await SaveChatParticipantsImp({
