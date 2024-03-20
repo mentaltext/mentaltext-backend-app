@@ -1,3 +1,4 @@
 import { IMessageBase } from "./IMessage";
 
-export interface TSendMessageReqBody extends IMessageBase {}
+export type TSendMessageReqBody = IMessageBase
+export type TMessageGetMessagesReqBody = string;

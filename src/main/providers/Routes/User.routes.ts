@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, Router } from "express";
+import { Request, Response, Router } from "express";
 import { UserCasesContainer } from "@/core/User/infraestructure/containers/UserCasesContainer";
 import { UserSendPhoneValidateDto } from "@/core/User/infraestructure/DTOs/UserSendPhoneValidate";
 import { UserCodePhoneValidateDto } from "@/core/User/infraestructure/DTOs/UserCodePhoneValidate";
@@ -55,10 +55,10 @@ export const register = (router: Router) => {
   );
   router.post(
     "/user/create-profile",
+    passportUserMiddleware,
     UploadFileHandler,
     UserCreateProfileDto,
-    async (req: Request, res: Response, next: NextFunction) => {
-      passportUserMiddleware(req, res, next);
+    async (req: Request, res: Response) => {
       UserCasesContainer.userCreateProfile(req, res);
     }
   );

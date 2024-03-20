@@ -5,10 +5,17 @@ import { UserRespositorysContainer } from "@/core/User/infraestructure/container
 
 passport.use("jwt-user", UserJwt(UserRespositorysContainer.findUserImp));
 
-export const passportUserMiddleware = passport.authenticate("jwt-user", { session: false }, (err, user) => {
-  if (err || !user) {
-    throw new UnauthorizedError("UnauthorizedError");
-  }
-});
+export const passportUserMiddleware = (req, res, next) => {
+  passport.authenticate("jwt-user", { session: false }, (err, user) => {
+    if (err) {
+      return next(new UnauthorizedError("UnauthorizedError: " + err.message));
+    }
+    if (!user) {
+      return next(new UnauthorizedError("UnauthorizedError: User not found"));
+    }
+    req.user = user;
+    next();
+  })(req, res, next);
+};
 
 export default passport;
