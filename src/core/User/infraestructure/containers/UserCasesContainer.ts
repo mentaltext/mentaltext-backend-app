@@ -6,10 +6,15 @@ import { UserCodePhoneValidate } from "../../application/UseCases/UserCodePhoneV
 import { FileRespositorysContainer } from "@/shared/providers/FileUploader/infraestructure/FileContainer";
 import { UserCreateProfile } from "../../application/UseCases/UserCreateProfile";
 import { UserProfileRespositorysContainer } from "@/core/UserProfile/infraestructure/containers/UserProfileRespositorysContainer";
+import { CreateJwtProvider } from "@/shared/providers/JwtProvider/infraestructure/JwtProvider";
+import { UserRefreshToken } from "../../application/UseCases/UserRefreshToken";
+import { decode } from "jsonwebtoken";
 
 const { findUserImp, saveUserImp, updateUserImp } = UserRespositorysContainer;
 const { uploadImage } = FileRespositorysContainer;
 const { saveUserProfileImp } = UserProfileRespositorysContainer;
+
+const jwtImp = CreateJwtProvider();
 
 export const UserCasesContainer = {
   userSendPhoneValidateUserCase: (req: Request, res: Response) =>
@@ -23,7 +28,8 @@ export const UserCasesContainer = {
     UserCodePhoneValidate(
       ResponseProvider(res),
       findUserImp,
-      updateUserImp
+      updateUserImp,
+      jwtImp
     )(req),
   userCreateProfile: (req: Request, res: Response) =>
     UserCreateProfile(
@@ -33,4 +39,6 @@ export const UserCasesContainer = {
       uploadImage,
       saveUserProfileImp
     )(req),
+  userRefreshToken: (req: Request, res: Response) =>
+    UserRefreshToken(ResponseProvider(res), decode, jwtImp, findUserImp)(req),
 };

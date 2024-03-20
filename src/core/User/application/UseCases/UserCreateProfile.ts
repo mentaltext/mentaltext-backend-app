@@ -37,7 +37,7 @@ export const UserCreateProfile: TUserCreateProfile =
         return ResponseLogger(StatusCodes.NOT_FOUND, "User not found", null);
       }
 
-      const fileName = `profile-photo-${user.phoneNumber}-${user.username}-${Date.now()}`;
+      const fileName = `profile-photo-${user.phoneNumber}-${username}-${Date.now()}`;
 
       const photoRoute = await UploadImage(profilePhoto!, AWS_S3_BUCKET_NAME, fileName);
       user = {
