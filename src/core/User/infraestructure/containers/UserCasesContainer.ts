@@ -40,7 +40,7 @@ export const UserCasesContainer = {
       updateUserImp,
       uploadImage,
       saveUserProfileImp
-    )(req),
+    )(req as any),
   userRefreshToken: (req: Request, res: Response) =>
     UserRefreshToken(ResponseProvider(res), decode, jwtImp, findUserImp)(req),
   userGetProfile: (req: Request, res: Response) =>

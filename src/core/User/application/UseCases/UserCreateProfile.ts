@@ -9,6 +9,7 @@ export const UserCreateProfile: TUserCreateProfile =
   (ResponseLogger, FindUserImp, UpdateUserImp, UploadImage, UserProfileCreateImp) => async (req) => {
     try {
       const { phoneNumber, name, username, language, bio } = req.body;
+      const { phoneNumber: userId } = req.user;
       const profilePhoto = req.file;
       const usernameExists: Nullable<IUserBase> = await FindUserImp([
         {
@@ -18,7 +19,7 @@ export const UserCreateProfile: TUserCreateProfile =
         },
       ]);
 
-      if (usernameExists) {
+      if (usernameExists && usernameExists.phoneNumber !== userId) {
         return ResponseLogger(
           StatusCodes.BAD_REQUEST,
           "Username already exists",

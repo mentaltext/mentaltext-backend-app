@@ -35,7 +35,8 @@ export type TUserCodePhoneValidateUserCase = EndpointHandler<
 >;
 export type TUserCreateProfile = EndpointHandler<
   [FindUser, UpdateUser, TUploadFile, SaveUserProfile],
-  TUserCreateProfileReqBody
+  TUserCreateProfileReqBody,
+  { user: IUserBase }
 >;
 export type TUserRefreshTokenUserCase = EndpointHandler<[DecodeInterface, TCreateJwtProviderImp, FindUser], TUserRefreshTokenReqBody>;
 export type TUserGetProfileUserCase = EndpointHandler<[], TUserGetProfileReqBody, { user: IUserBase }>;
