@@ -5,6 +5,9 @@ import { AWS_S3_BUCKET_URL } from "@/shared/constants/CommonConstants";
 
 export const FileRepository = (s3: S3Client): IFileRepository => ({
   async uploadFile(file, bucketName, fileName = ""): Promise<string> {
+    if (!file) {
+      return "";
+    }
     if (typeof file === "string") {
       return file;
     }
