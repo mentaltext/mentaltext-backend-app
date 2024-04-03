@@ -1,3 +1,4 @@
+import { TChatGetAllReqBody } from "./ChatBodyRequest";
 import { TCreateChatReqBody } from "./ChatBodyRequest";
 import { TResponseLoggerImp } from "@/shared/providers/Response/domain/IResponse";
 import { SaveChat } from "./IChatApplicationImplementations";
@@ -28,3 +29,4 @@ export type TCreateChatUseCase = EndpointHandler<
   TCreateChatReqBody,
   { user: IUserBase }
 >;
+export type TChatGetAllUserCase = EndpointHandler<[], TChatGetAllReqBody, { user: IUserBase }>;
