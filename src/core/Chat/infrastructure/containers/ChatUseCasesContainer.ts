@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ResponseProvider } from "@/shared/providers/Response/infraestructure/Response";
 import { Request, Response } from "express";
 import { ChatRespositorysContainer } from "./ChatRespositorysContainer";
@@ -20,5 +21,5 @@ export const ChatUseCasesContainer = {
       saveChatParticipantsImp,
       saveChatSettingsImp,
       findChatParticipantsImp
-    )(req),
+    )(req as any),
 };

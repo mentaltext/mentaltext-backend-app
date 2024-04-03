@@ -18,7 +18,8 @@ export const CreateChat: TCreateChatUseCase =
   ) =>
   async (req) => {
     try {
-      const { chatParticipant, chatParticipantTwo } = req.body;
+      const { chatParticipant } = req.body;
+      const userTwo = req.user;
       const userOne: Nullable<IUserBase> = await FindUserImp([
         {
           field: "phoneNumber",
@@ -29,19 +30,6 @@ export const CreateChat: TCreateChatUseCase =
 
       if (!userOne) {
         throw new Error(`User with phone number ${chatParticipant} not found`);
-      }
-
-      const userTwo: Nullable<IUserBase> = await FindUserImp([
-        {
-          field: "phoneNumber",
-          value: chatParticipantTwo,
-          operator: operatorEnum.EQUAL,
-        },
-      ]);
-      if (!userTwo) {
-        throw new Error(
-          `User with phone number ${chatParticipantTwo} not found`
-        );
       }
 
       // Busqueda de chat existente entre los dos usuarios
