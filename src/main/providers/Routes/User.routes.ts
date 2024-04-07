@@ -6,6 +6,7 @@ import { UserCreateProfileDto } from "@/core/User/infraestructure/DTOs/UserCreat
 import { UploadFileHandler } from "@/main/providers/MulterProvider";
 import { UserRefresTokenDto } from "@/core/User/infraestructure/DTOs/UserRefreshToken";
 import { passportUserMiddleware } from "@/shared/PassportProvider/infraestructure/passportConfig";
+import { UserValidateProfileDTO } from "@/core/User/infraestructure/DTOs/UserValidateProfileDTO";
 export const register = (router: Router) => {
   if (process.env.NODE_ENV !== "prod") {
     router.get("/err", function (_, __, ___) {
@@ -67,6 +68,14 @@ export const register = (router: Router) => {
     passportUserMiddleware,
     async (req: Request, res: Response) => {
       UserCasesContainer.userGetProfile(req, res);
+    }
+  );
+  router.get(
+    "/user/validate-profile",
+    UserValidateProfileDTO,
+    passportUserMiddleware,
+    async (req: Request, res: Response) => {
+      UserCasesContainer.userValidateProfile(req, res);
     }
   );
 };

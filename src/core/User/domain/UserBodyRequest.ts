@@ -10,3 +10,4 @@ export type TUserCodePhoneValidateReqBody = Pick<IUserBase, "phoneCode" | "phone
 export type TUserCreateProfileReqBody = Omit<IUserBaseIUserProfileBase, "">;
 export type TUserRefreshTokenReqBody = { refreshToken: string };
 export type TUserGetProfileReqBody = string;
+export type TUserValidateProfileReqBody = Pick<IUserBaseIUserProfileBase, "phoneNumber">;
