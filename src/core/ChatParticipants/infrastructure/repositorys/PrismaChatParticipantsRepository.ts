@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-  import { IChatParticipantsRepository } from "@/core/ChatParticipants/domain/IChatParticipantsRepository";
-  import { Filter, operatorEnum } from "@/shared/Types/IFilter";
+  import { IChatParticipantsRepository } from "./../../../../core/ChatParticipants/domain/IChatParticipantsRepository";
+  import { Filter, operatorEnum } from "./../../../../shared/Types/IFilter";
 import { IChatParticipantsBase } from "../../domain/IChatParticipants";
 
   export const PrismaChatParticipantsRepository = (

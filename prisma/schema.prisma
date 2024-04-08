@@ -171,7 +171,7 @@ model Connections {
   id         String   @default(uuid())
   chatId     String
   occurredAt DateTime
-  chat       Chat     @relation(fields: [chatId], references: [id])
+  chat       Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@id([id])
 }
