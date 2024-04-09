@@ -13,8 +13,13 @@ export class UserAction implements IAction {
 
   public register(socket: Socket): void {
     const { phoneNumber: phoneNumberDestructured, name } = this.userBase;
-    socket.on("disconnect", async () => {
-      consoleLoggerImp(LogType.WARN, `[${phoneNumberDestructured}] - [${name}] - has been disconnected`);
-    });
+    if (!socket["disconnectListenerAdded"]) {
+      socket.on("disconnect", async () => {
+        consoleLoggerImp(
+          LogType.LOG,
+          `[${phoneNumberDestructured}] - [${name}] - has been disconnected`
+        );
+      });
+    }
   }
 }

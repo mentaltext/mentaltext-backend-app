@@ -12,11 +12,11 @@ import { ChatActions } from "./../../../core/Chat/application/SocketActions/Chat
 
 export const registerUserSocketActions = (io: SocketServer) => {
   const { findUserImp } = UserRespositorysContainer;
-  const actionManager = new ActionManager();
 
   io.on("connection", async (socket) => {
-    const { token } = socket.handshake.query;
+    const actionManager = new ActionManager();
     let UserSegregable: IUserBase | undefined | null;
+    const { token } = socket.handshake.query;
     const isTokenValid = async (token) => {
       try {
         const { exp, phoneNumber }: CommonTokenStructure = jwtDecode(token);
@@ -47,13 +47,10 @@ export const registerUserSocketActions = (io: SocketServer) => {
       LogType.LOG,
       `[${phoneNumberDestructured}] - [${name}] - has been connected`
     );
-
-    actionManager.addAction(new UserAction(UserSegregable!));
-    actionManager.addAction(new ChatActions(UserSegregable!));
-
-    socket.on("subscribe", (msg) => {
-      console.log("message: " + msg);
-    });
-    actionManager.registerActions(socket);
+    if (UserSegregable) {
+      actionManager.addAction(new UserAction(UserSegregable));
+      actionManager.addAction(new ChatActions(UserSegregable));
+      actionManager.registerActions(socket);
+    }
   });
 };
