@@ -6,7 +6,6 @@ export const ChatGetAll: TChatGetAllUserCase =
   (ResponseLogger) => async (req) => {
     try {
       const { phoneNumber } = req.user;
-
       const chats = await PrismaProvider.chatParticipants.findMany({
         where: {
           userId: phoneNumber,
@@ -18,13 +17,18 @@ export const ChatGetAll: TChatGetAllUserCase =
               lastMessageSentAt: true,
               messages: {
                 select: {
+                  ownerId: true,
                   content: true,
                   createdAt: true,
                 },
                 orderBy: {
                   createdAt: "desc",
                 },
-                take: 1,
+                where: {
+                  NOT: {
+                    ownerId: phoneNumber
+                  }
+                }
               },
               participants: {
                 select: {
@@ -32,30 +36,30 @@ export const ChatGetAll: TChatGetAllUserCase =
                     select: {
                       name: true,
                       phoneNumber: true,
-                      profilePhoto: true
+                      profilePhoto: true,
                     },
                   },
                 },
                 where: {
                   user: {
                     NOT: {
-                      phoneNumber: phoneNumber
-                    }
-                  }
-                }
+                      phoneNumber: phoneNumber,
+                    },
+                  },
+                },
               },
             },
           },
         },
+
         orderBy: {
           chat: {
-            lastMessageSentAt: "desc",
+            lastMessageSentAt: "asc",
           },
         },
       });
       if (!chats) {
         return ResponseLogger(StatusCodes.NOT_FOUND, "Not Chats Found", {});
-
       }
       return ResponseLogger(StatusCodes.OK, "Chats Encontrados", chats);
     } catch (error) {
