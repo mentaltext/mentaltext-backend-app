@@ -15,6 +15,7 @@ export const SendMessage: TSendMessgeUseCase =
       const chat = await PrismaProvider.chat.findUnique({
         where: { id: chatId },
       });
+      const createdAt = new Date();
 
       if (!chat) {
         return ResponseLogger(StatusCodes.NOT_FOUND, "Chat not found", null);
@@ -50,7 +51,8 @@ export const SendMessage: TSendMessgeUseCase =
               lastMessageSentAt: createdMessage.createdAt,
             },
           });
-          io.to(chatId).emit("new-message", content);
+          io.to(chatId).emit("new-message", { ownerId, content, createdAt });
+          io.to(`${chatId}-notify`).emit("new-message-notify", "Nuevo Mensaje Enviado");
           return ResponseLogger(StatusCodes.CREATED, "Chat created", null);
         }
       }
@@ -62,7 +64,11 @@ export const SendMessage: TSendMessgeUseCase =
         },
       });
 
-      if (retainedMessages.length > 0 && retainedMessages[0].ownerId !== ownerId) {
+
+      if (
+        retainedMessages.length > 0 &&
+        retainedMessages[0].ownerId !== ownerId
+      ) {
         // Si hay mensajes retenidos, enviarlos al hilo principal
         for (const message of retainedMessages) {
           await PrismaProvider.message.create({
@@ -102,6 +108,7 @@ export const SendMessage: TSendMessgeUseCase =
           "retained-messages-sent",
           retainedMessages.map((m) => m.content)
         );
+        io.to(`${chatId}-notify`).emit("new-message-notify", "Nuevo Mensaje Enviado");
       }
 
       // Verificar si es el primer mensaje del chat
@@ -118,7 +125,7 @@ export const SendMessage: TSendMessgeUseCase =
             ownerId: ownerId,
             content,
             type: "TEXT", // Ajusta según el tipo de mensaje
-            createdAt: new Date(),
+            createdAt,
             status: "SENT",
           },
         });
@@ -131,10 +138,11 @@ export const SendMessage: TSendMessgeUseCase =
             ownerId: ownerId,
             content,
             type: "TEXT", // Ajusta según el tipo de mensaje
-            createdAt: new Date(),
+            createdAt,
           },
         });
-        io.to(chatId).emit("new-message", content);
+        io.to(chatId).emit("new-message", { ownerId, content, createdAt });
+        io.to(`${chatId}-notify`).emit("new-message-notify", "Nuevo Mensaje Enviado");
       }
 
       return ResponseLogger(StatusCodes.CREATED, "Chat created", null);

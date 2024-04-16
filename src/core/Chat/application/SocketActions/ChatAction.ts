@@ -17,6 +17,13 @@ export class ChatActions implements IAction {
       }
       const { findChatParticipantsImp } = ChatParticipantsRespositorysContainer;
       const phoneNumber = this.userBase.phoneNumber;
+      let roomId;
+      const isJoinRoomNotify = room.includes("-notify");
+      if (isJoinRoomNotify) {
+        roomId = room.split("-notify")[0];
+      } else {
+        roomId = room;
+      }
       const findedChatParticipant = await findChatParticipantsImp([
         {
           field: "userId",
@@ -26,7 +33,7 @@ export class ChatActions implements IAction {
         {
           field: "chatId",
           operator: operatorEnum.EQUAL,
-          value: room
+          value: roomId
         }
       ]);
 
@@ -34,9 +41,9 @@ export class ChatActions implements IAction {
         return socket.emit("joinRoomCanceled", "No puedes acceder a esta sala");
       }
 
-      consoleLoggerImp(LogType.INFO, `Usuario se unió a la sala ${room} ${phoneNumber}`);
-      socket.join(room);
-      return socket.emit("joinRoomAccepted", "Accediste a la sala");
+      consoleLoggerImp(LogType.INFO, `Usuario se unió a la sala ${roomId} ${phoneNumber}`);
+      socket.join(roomId);
+      return socket.emit("joinRoomAccepted", `Accediste a la sala ${roomId}`);
     });
   }
 }
