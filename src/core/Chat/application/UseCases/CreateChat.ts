@@ -94,7 +94,7 @@ export const CreateChat: TCreateChatUseCase =
         chatInParticipantTwo,
         saveChatSettingsImp,
       };
-
+      console.log(body);
       return ResponseLogger(StatusCodes.CREATED, "Chat created", body);
     } catch (error) {
       if (error instanceof Error) {

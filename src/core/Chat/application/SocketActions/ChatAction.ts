@@ -41,9 +41,9 @@ export class ChatActions implements IAction {
         return socket.emit("joinRoomCanceled", "No puedes acceder a esta sala");
       }
 
-      consoleLoggerImp(LogType.INFO, `Usuario se unió a la sala ${roomId} ${phoneNumber}`);
+      consoleLoggerImp(LogType.INFO, `Usuario se unió a la sala ${roomId} ${phoneNumber}  [${room}]`);
       socket.join(roomId);
-      return socket.emit("joinRoomAccepted", `Accediste a la sala ${roomId}`);
+      return socket.emit("joinRoomAccepted", `Accediste a la sala ${roomId} [${room}]`);
     });
   }
 }

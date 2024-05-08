@@ -16,7 +16,8 @@ export const UserValidateProfile: TUserValidateProfileUserCase = (ResponseLogger
     ]);
 
     return ResponseLogger(StatusCodes.OK, "User Finded", {
-      findedUser: !!findedUser
+      findedUser: !!findedUser,
+      user: findedUser
     });
   } catch (error) {
     if (error instanceof Error) {

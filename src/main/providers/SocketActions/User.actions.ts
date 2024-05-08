@@ -37,7 +37,6 @@ export const registerUserSocketActions = (io: SocketServer) => {
 
     const isValid = await isTokenValid(token);
     if (!isValid) {
-      console.log("Token inválido o expirado. Desconectando socket...");
       socket.emit("auth_error", "Token inválido o expirado");
       socket.disconnect(true);
       return;
