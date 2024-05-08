@@ -6,9 +6,17 @@ import { Nullable } from "@/shared/Types/TNullable";
 import { AWS_S3_BUCKET_NAME } from "@/shared/constants/CommonConstants";
 
 export const UserCreateProfile: TUserCreateProfile =
-  (ResponseLogger, FindUserImp, UpdateUserImp, UploadImage, UserProfileCreateImp) => async (req) => {
+  (
+    ResponseLogger,
+    FindUserImp,
+    UpdateUserImp,
+    UploadImage,
+    UserProfileCreateImp
+  ) =>
+  async (req) => {
     try {
       const { phoneNumber, name, username, language, bio } = req.body;
+      const { phoneNumber: userId } = req.user;
       const profilePhoto = req.file;
       const usernameExists: Nullable<IUserBase> = await FindUserImp([
         {
@@ -18,7 +26,7 @@ export const UserCreateProfile: TUserCreateProfile =
         },
       ]);
 
-      if (usernameExists) {
+      if (usernameExists && usernameExists.phoneNumber !== userId) {
         return ResponseLogger(
           StatusCodes.BAD_REQUEST,
           "Username already exists",
@@ -37,14 +45,21 @@ export const UserCreateProfile: TUserCreateProfile =
         return ResponseLogger(StatusCodes.NOT_FOUND, "User not found", null);
       }
 
-      const fileName = `profile-photo-${user.phoneNumber}-${username}-${Date.now()}`;
+      const fileName = `profile-photo-${
+        user.phoneNumber
+      }-${username}-${Date.now()}`;
 
-      const photoRoute = await UploadImage(profilePhoto!, AWS_S3_BUCKET_NAME, fileName);
+      const photoRoute = await UploadImage(
+        profilePhoto!,
+        AWS_S3_BUCKET_NAME,
+        fileName
+      );
       user = {
         ...user,
         name: name || "",
         username: username || "",
-        profilePhoto: photoRoute || "",
+        profilePhoto:
+          user.profilePhoto.length > 1 ? user.profilePhoto : photoRoute || "",
         language: language || "es",
         updatedAt: new Date(),
       };
@@ -52,7 +67,7 @@ export const UserCreateProfile: TUserCreateProfile =
         phoneNumber: user.phoneNumber,
         bio: bio || "",
         lastSeen: new Date(),
-        status: "ONLINE"
+        status: "ONLINE",
       });
 
       await UpdateUserImp(user);

@@ -49,7 +49,7 @@ export const modifyIUserApplicationUserCases = (
     "../../../src/core",
     moduleToGenerate,
     "domain",
-    "IUserApplicationUserCases.ts"
+    `I${moduleToGenerate}ApplicationUserCases.ts`
   );
 
   const typeReqBodyModuleName = `T${moduleToGenerate}${newModuleName}ReqBody`;
@@ -67,14 +67,14 @@ export const modifyIUserApplicationUserCases = (
     fileContent = fileContent.replace(importSearchPattern, (match, p1) => {
       // Asegura no duplicar la importación si ya existe
       if (!p1.includes(`T${moduleToGenerate}${newModuleName}ReqBody`)) {
-        return `import { ${p1}, T${moduleToGenerate}${newModuleName}ReqBody } from "./UserBodyRequest";`;
+        return `import { ${p1}, T${moduleToGenerate}${newModuleName}ReqBody } from "./${moduleToGenerate}BodyRequest";`;
       }
       return match;
     });
   } else {
     // Si por alguna razón la línea de importación no está presente, la agrega al inicio del archivo
     fileContent =
-      `import { T${moduleToGenerate}${newModuleName}ReqBody } from "./UserBodyRequest";\n` +
+      `import { T${moduleToGenerate}${newModuleName}ReqBody } from "./${moduleToGenerate}BodyRequest";\n` +
       fileContent;
   }
 
@@ -103,7 +103,7 @@ export const modifyIUserBodyRequest = (
     "../../../src/core",
     moduleToGenerate,
     "domain",
-    "UserBodyRequest.ts"
+    `${moduleToGenerate}BodyRequest.ts`
   );
 
 

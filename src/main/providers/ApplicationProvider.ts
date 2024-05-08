@@ -8,47 +8,50 @@ import ErrorHandlerProvider from "./ErrorHandlerProvider";
 import passport from "passport";
 import http from "http";
 import { S3Provider } from "./AwsProvider";
+import { SocketServerProvider } from "./SocketServerProvider";
 
 export const server = {
-  httpServer: null as http.Server | null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  httpServer: null as any,
 };
 
+interface IApplicationProvider {
+  app: Express;
+  logger: ILogger;
+  s3;
+}
 
-export const ApplicationProvider = (logger: ILogger, inTest = false) => async (): Promise<Express> => {
-  const app = express();
-  const router = Router();
+export const ApplicationProvider =
+  (logger: ILogger) =>
+  (): IApplicationProvider => {
+    const app = express();
+    const router = Router();
 
-  require("./../../shared/PassportProvider/infraestructure/passportConfig");
-  app.use(passport.initialize());
+    require("./../../shared/PassportProvider/infraestructure/passportConfig");
+    app.use(passport.initialize());
 
+    initLocals(app);
+    HttpMiddlewareProvider(app, logger)();
 
-  initLocals(app);
-  HttpMiddlewareProvider(app, logger)();
+    app.use(router);
+    RegisterRoutes(router);
 
-  app.use(router);
-  RegisterRoutes(router);
+    app.use(ErrorHandlerProvider.syntaxErrorHandler());
+    app.use(ErrorHandlerProvider.notFoundHandler());
+    app.use(ErrorHandlerProvider.clientErrorHandler());
+    app.use(ErrorHandlerProvider.errorHandler());
 
-  app.use(ErrorHandlerProvider.syntaxErrorHandler());
-  app.use(ErrorHandlerProvider.notFoundHandler());
-  app.use(ErrorHandlerProvider.clientErrorHandler());
-  app.use(ErrorHandlerProvider.errorHandler());
+    const s3 = S3Provider;
 
+    server.httpServer = http.createServer(app);
+    SocketServerProvider(server.httpServer)();
 
-  const port = process.env.PORT;
-
-  const s3 = S3Provider;
-
-  if (!inTest) {
-    server.httpServer = app.listen(
-      port,
-      () => {
-        logger.info(`Server is running at http://localhost:${port}/`);
-        logger.info(`AWS VERSION :: ${s3.config.apiVersion}`);
-      }
-    );
-  }
-  return app;
-};
+    return {
+      app,
+      logger,
+      s3,
+    };
+  };
 
 export const stopServer = async (): Promise<void> => {
   // Detener el servidor Express si está en ejecución
@@ -56,10 +59,8 @@ export const stopServer = async (): Promise<void> => {
     await new Promise<void>((resolve, reject) => {
       server.httpServer!.close((err) => {
         if (err) {
-          console.error("Error al detener el servidor Express:", err);
           reject(err);
         } else {
-          console.log("Servidor Express detenido");
           resolve();
         }
       });

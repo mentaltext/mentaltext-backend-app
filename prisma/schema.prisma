@@ -50,13 +50,15 @@ model UserSettings {
 }
 
 model Chat {
-  id               String             @id
+  id               String             @id @default(uuid())
   lastConnectionId String?
   chatSettings     ChatSettings[]
   participants     ChatParticipants[]
   messages         Message[]
   retainedMessages RetainedMessages[]
   connections      Connections[]
+
+  lastMessageSentAt DateTime?
 }
 
 model ChatSettings {
@@ -64,14 +66,14 @@ model ChatSettings {
   iaEnabled Boolean  @default(false)
   updatedAt DateTime
   updatedBy String
-  chat      Chat     @relation(fields: [chatId], references: [id])
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [updatedBy], references: [phoneNumber], onDelete: Cascade)
 }
 
 model ChatParticipants {
   chatId String
   userId String
-  chat   Chat   @relation(fields: [chatId], references: [id])
+  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [phoneNumber], onDelete: Cascade)
 
   @@id([chatId, userId])
@@ -82,11 +84,11 @@ model Message {
   chatId    String
   ownerId   String
   content   String
-  type      String
+  type      MessageReadStatus @default(DELIVERED) // TODO: hacer refactor de esta parte a messageStatus
   createdAt DateTime
   themes    String[]
-  chat      Chat     @relation(fields: [chatId], references: [id])
-  owner     User     @relation(fields: [ownerId], references: [phoneNumber], onDelete: Cascade)
+  chat      Chat              @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  owner     User              @relation(fields: [ownerId], references: [phoneNumber], onDelete: Cascade)
 
   messageStatus    MessageStatus[]
   favoriteMessages FavoriteMessages[]
@@ -99,9 +101,10 @@ model RetainedMessages {
   chatId    String
   ownerId   String
   content   String
-  type      String
+  type      QueueStatus @default(QUEUED) // TODO: hacer refactor de esta parte a messageStatus
   createdAt DateTime
   status    String
+  themes    String[] @default([])
   chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
   owner     User     @relation(fields: [ownerId], references: [phoneNumber], onDelete: Cascade)
 
@@ -154,7 +157,7 @@ model GroupParticipants {
 }
 
 model BlockedUsers {
-  id        String
+  id        String   @default(uuid())
   blockerId String
   blockedId String
   createdAt DateTime
@@ -166,10 +169,10 @@ model BlockedUsers {
 }
 
 model Connections {
-  id         String
+  id         String   @default(uuid())
   chatId     String
   occurredAt DateTime
-  chat       Chat     @relation(fields: [chatId], references: [id])
+  chat       Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@id([id])
 }
@@ -189,6 +192,7 @@ enum MessageType {
 }
 
 enum QueueStatus {
+  QUEUED
   PENDING
   SENT
   FAILED
