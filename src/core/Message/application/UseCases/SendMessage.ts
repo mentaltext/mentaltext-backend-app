@@ -3,18 +3,34 @@ import { TSendMessgeUseCase } from "../../domain/IMessageApplicationUserCases";
 import { PrismaProvider } from "@/main/providers/PrismaProvider";
 import { v4 as uuidv4 } from "uuid";
 import { io } from "@/main/providers/SocketServerProvider";
+import { MessageReadStatus } from "@prisma/client";
 
 export const SendMessage: TSendMessgeUseCase =
   (ResponseLogger) => async (req) => {
     const { chatId, content } = req.body;
     const { phoneNumber } = req.user;
     const ownerId = phoneNumber;
-
     try {
+      let sendeMessageToData;
+      const chatParticipant = await PrismaProvider.chatParticipants.findFirst({
+        where: {
+          chatId,
+          userId: ownerId,
+        },
+      });
+      // Hay que validar que el usuario si pertenezca a ese chat
+      if (!chatParticipant) {
+        return ResponseLogger(
+          StatusCodes.UNAUTHORIZED,
+          "You Cant Message in this chat",
+          null
+        );
+      }
       // Verificar si el chat existe
       const chat = await PrismaProvider.chat.findUnique({
         where: { id: chatId },
       });
+      const createdAt = new Date();
 
       if (!chat) {
         return ResponseLogger(StatusCodes.NOT_FOUND, "Chat not found", null);
@@ -32,14 +48,14 @@ export const SendMessage: TSendMessgeUseCase =
         const currentDate = new Date();
         const difference = currentDate.getTime() - lastConnectionDate.getTime();
         const hoursDifference = difference / (1000 * 3600);
-        if (!(hoursDifference > 24)) {
+        if (hoursDifference <= 24) {
           const createdMessage = await PrismaProvider.message.create({
             data: {
               id: uuidv4(),
               chatId,
               ownerId: ownerId,
               content,
-              type: "TEXT", // Ajusta según el tipo de mensaje
+              type: "DELIVERED",
               createdAt: new Date(),
             },
           });
@@ -50,8 +66,22 @@ export const SendMessage: TSendMessgeUseCase =
               lastMessageSentAt: createdMessage.createdAt,
             },
           });
-          io.to(chatId).emit("new-message", content);
-          return ResponseLogger(StatusCodes.CREATED, "Chat created", null);
+          io.to(chatId).emit("new-message", {
+            chatId,
+            ownerId,
+            content,
+            createdAt,
+            id: createdMessage.id,
+          });
+          io.to(`${chatId}-notify`).emit(
+            "new-message-notify",
+            "Nuevo Mensaje Enviado"
+          );
+          return ResponseLogger(
+            StatusCodes.CREATED,
+            "Chat created",
+            createdMessage
+          );
         }
       }
 
@@ -62,7 +92,10 @@ export const SendMessage: TSendMessgeUseCase =
         },
       });
 
-      if (retainedMessages.length > 0 && retainedMessages[0].ownerId !== ownerId) {
+      if (
+        retainedMessages.length > 0 &&
+        retainedMessages[0].ownerId !== ownerId
+      ) {
         // Si hay mensajes retenidos, enviarlos al hilo principal
         for (const message of retainedMessages) {
           await PrismaProvider.message.create({
@@ -71,7 +104,7 @@ export const SendMessage: TSendMessgeUseCase =
               chatId: message.chatId,
               ownerId: message.ownerId,
               content: message.content,
-              type: message.type,
+              type: "DELIVERED" as MessageReadStatus,
               createdAt: message.createdAt,
             },
           });
@@ -102,42 +135,55 @@ export const SendMessage: TSendMessgeUseCase =
           "retained-messages-sent",
           retainedMessages.map((m) => m.content)
         );
+        io.emit("chats-actualized");
       }
-
+      const lastConnectionDate = new Date(lastConnection?.occurredAt || "");
+      const currentDate = new Date();
+      const difference = currentDate.getTime() - lastConnectionDate.getTime();
+      const hoursDifference = difference / (1000 * 3600);
       // Verificar si es el primer mensaje del chat
       const totalMessages = await PrismaProvider.message.count({
         where: { chatId },
       });
 
-      if (totalMessages === 0) {
+      if (totalMessages === 0 || hoursDifference > 24) {
         // Si es el primer mensaje, guardarlo en RetainedMessages
-        await PrismaProvider.retainedMessages.create({
+        sendeMessageToData = await PrismaProvider.retainedMessages.create({
           data: {
             id: uuidv4(),
             chatId,
             ownerId: ownerId,
             content,
-            type: "TEXT", // Ajusta según el tipo de mensaje
-            createdAt: new Date(),
+            type: "QUEUED",
+            createdAt,
             status: "SENT",
           },
         });
       } else {
-        // Si no, guardarlo en el hilo principal de mensajes
-        await PrismaProvider.message.create({
+        sendeMessageToData = await PrismaProvider.message.create({
           data: {
             id: uuidv4(),
             chatId,
             ownerId: ownerId,
             content,
-            type: "TEXT", // Ajusta según el tipo de mensaje
-            createdAt: new Date(),
+            type: "DELIVERED", // Ajusta según el tipo de mensaje
+            createdAt,
           },
         });
-        io.to(chatId).emit("new-message", content);
+        io.to(chatId).emit("new-message", {
+          chatId,
+          ownerId,
+          content,
+          createdAt,
+          id: sendeMessageToData.id,
+        });
       }
 
-      return ResponseLogger(StatusCodes.CREATED, "Chat created", null);
+      return ResponseLogger(
+        StatusCodes.CREATED,
+        "Chat created",
+        sendeMessageToData
+      );
     } catch (error) {
       if (error instanceof Error) {
         return ResponseLogger(StatusCodes.BAD_REQUEST, error.message, null);

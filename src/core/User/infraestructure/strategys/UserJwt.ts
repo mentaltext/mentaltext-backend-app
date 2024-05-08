@@ -23,7 +23,10 @@ export const UserJwt = (UserFind: FindUser) => new JwtStrategy(userOptions, asyn
       return done(null, false);
     }
     if (user) {
-      return done(null, user);
+      return done(null, {
+        ...user,
+        temporaryCode: ""
+      });
     }
     return done(null, false);
   } catch (error) {

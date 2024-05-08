@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { IUserRepository } from "@/core/User/domain/IUserRepository";
-import { Filter, operatorEnum } from "@/shared/Types/IFilter";
+import { Filter, operatorEnum } from "./../../../../shared/Types/IFilter";
 import { IUserBase } from "../../domain/IUser";
 
 export const PrismaUserRepository = (

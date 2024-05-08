@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ResponseProvider } from "@/shared/providers/Response/infraestructure/Response";
 import { Request, Response } from "express";
 import { UserRespositorysContainer } from "./UserRespositorysContainer";
@@ -9,6 +10,8 @@ import { UserProfileRespositorysContainer } from "@/core/UserProfile/infraestruc
 import { CreateJwtProvider } from "@/shared/providers/JwtProvider/infraestructure/JwtProvider";
 import { UserRefreshToken } from "../../application/UseCases/UserRefreshToken";
 import { decode } from "jsonwebtoken";
+import { UserGetProfile } from "../../application/UseCases/UserGetProfile";
+import { UserValidateProfile } from "../../application/UseCases/UserValidateProfile";
 
 const { findUserImp, saveUserImp, updateUserImp } = UserRespositorysContainer;
 const { uploadImage } = FileRespositorysContainer;
@@ -38,7 +41,11 @@ export const UserCasesContainer = {
       updateUserImp,
       uploadImage,
       saveUserProfileImp
-    )(req),
+    )(req as any),
   userRefreshToken: (req: Request, res: Response) =>
     UserRefreshToken(ResponseProvider(res), decode, jwtImp, findUserImp)(req),
+  userGetProfile: (req: Request, res: Response) =>
+    UserGetProfile(ResponseProvider(res))(req as any),
+  userValidateProfile: (req: Request, res: Response) =>
+    UserValidateProfile(ResponseProvider(res), findUserImp)(req)
 };

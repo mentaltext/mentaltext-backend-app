@@ -1,28 +1,24 @@
-import { TUserRefreshTokenReqBody } from "./UserBodyRequest";
-import { TResponseLoggerImp } from "@/shared/providers/Response/domain/IResponse";
 import {
   SaveUser,
   FindUser,
   UpdateUser,
 } from "./IUserApplicationImplementations";
-import { Request, Response } from "express";
-// import { TComapreProviderImp, THashProviderImp } from "@/shared/providers/HashProvider/domain/IHashProvider";
-// import { DecodeInterface, TCreateJwtProviderImp } from "@/shared/providers/JwtProvider/domain/TJwtProvider";
 import {
+  TUserRefreshTokenReqBody,
+  TUserGetProfileReqBody,
+  TUserValidateProfileReqBody,
   TUserCodePhoneValidateReqBody,
   TUserCreateProfileReqBody,
   TUserSendPhoneValidateReqBody,
 } from "./UserBodyRequest";
 import { TUploadFile } from "@/shared/providers/FileUploader/domain/IFileRepository";
 import { SaveUserProfile } from "@/core/UserProfile/domain/IUserProfileApplicationImplementations";
-import { DecodeInterface, TCreateJwtProviderImp } from "@/shared/providers/JwtProvider/domain/TJwtProvider";
-
-type EndpointHandler<T extends unknown[], ReqBody = unknown> = (
-  ResponserProvider: TResponseLoggerImp,
-  ...implementations: T
-) => (
-  req: Request<unknown, unknown, ReqBody>
-) => Promise<Response<unknown, Record<string, unknown>> | undefined>;
+import {
+  DecodeInterface,
+  TCreateJwtProviderImp,
+} from "@/shared/providers/JwtProvider/domain/TJwtProvider";
+import { IUserBase } from "./IUser";
+import { EndpointHandler } from "@/shared/Types/Request";
 
 export type TUserSendPhoneValidateUserCase = EndpointHandler<
   [SaveUser, FindUser, UpdateUser],
@@ -34,6 +30,21 @@ export type TUserCodePhoneValidateUserCase = EndpointHandler<
 >;
 export type TUserCreateProfile = EndpointHandler<
   [FindUser, UpdateUser, TUploadFile, SaveUserProfile],
-  TUserCreateProfileReqBody
+  TUserCreateProfileReqBody,
+  { user: IUserBase }
 >;
-export type TUserRefreshTokenUserCase = EndpointHandler<[DecodeInterface, TCreateJwtProviderImp, FindUser], TUserRefreshTokenReqBody>;
+export type TUserRefreshTokenUserCase = EndpointHandler<
+  [DecodeInterface, TCreateJwtProviderImp, FindUser],
+  TUserRefreshTokenReqBody
+>;
+export type TUserGetProfileUserCase = EndpointHandler<
+  [],
+  TUserGetProfileReqBody,
+  { user: IUserBase }
+>;
+export type TUserValidateProfileUserCase = EndpointHandler<
+  [FindUser],
+  unknown,
+  unknown,
+  TUserValidateProfileReqBody
+>;
