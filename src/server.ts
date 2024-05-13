@@ -18,7 +18,7 @@ import("tsconfig-paths")
   .then(() => {
     const port = config().port;
     const { logger, s3 } = ApplicationProvider(ConsoleLogger)();
-    server.httpServer.listen(port, () => {
+    server.httpServer.listen(port, "0.0.0.0", () => {
       logger.info(`Server is running at http://localhost:${port}/`);
       logger.info(`AWS VERSION :: ${s3.config.apiVersion}`);
 

@@ -35,7 +35,8 @@ export const MessageGetMessages: TMessageGetMessagesUserCase =
         );
 
       // Combinar los mensajes y mensajes retenidos en un solo array
-      const combinedMessages = messages.concat(retainedMessages);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const combinedMessages = messages.concat(retainedMessages as unknown as any);
 
       // Ordenar el array combinado por la fecha de creación (createdAt) de forma ascendente
       combinedMessages.sort(

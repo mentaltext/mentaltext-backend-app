@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  mentaltext-backend:
+    container_name: mentaltext-backend_1
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+    command: npm start
+    networks:
+      - mentaltext-network
+networks:
+  mentaltext-network:
