@@ -47,5 +47,5 @@ export const UserCasesContainer = {
   userGetProfile: (req: Request, res: Response) =>
     UserGetProfile(ResponseProvider(res))(req as any),
   userValidateProfile: (req: Request, res: Response) =>
-    UserValidateProfile(ResponseProvider(res), findUserImp)(req)
+    UserValidateProfile(ResponseProvider(res), findUserImp)(req as any)
 };
