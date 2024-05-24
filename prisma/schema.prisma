@@ -104,9 +104,9 @@ model RetainedMessages {
   type      QueueStatus @default(QUEUED) // TODO: hacer refactor de esta parte a messageStatus
   createdAt DateTime
   status    String
-  themes    String[] @default([])
-  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  owner     User     @relation(fields: [ownerId], references: [phoneNumber], onDelete: Cascade)
+  themes    String[]    @default([])
+  chat      Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  owner     User        @relation(fields: [ownerId], references: [phoneNumber], onDelete: Cascade)
 
   @@id([id])
 }
@@ -175,6 +175,11 @@ model Connections {
   chat       Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@id([id])
+}
+
+model AppGlobalConfigs {
+  id                     String @id @default(uuid())
+  connectionDurationTime Int @default(24)
 }
 
 // Define enums
