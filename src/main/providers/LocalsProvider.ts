@@ -6,8 +6,7 @@ import { Application } from "express";
  * Define Las configuraciones de la app
  */
 const config = () => {
-  dotenv.config({ path: path.join(__dirname, "../../../.env") });
-
+  dotenv.config({ path: path.join(__dirname, "../../../.env"), override: true }, );
   const port = process.env.PORT || 3000;
   const node_env = process.env.NODE_ENV || "dev";
   const appSecret =
@@ -20,6 +19,10 @@ const config = () => {
   const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
   const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
 
+  const bucketName = process.env.BUCKET_NAME;
+
+  const bucketUrl = process.env.BUCKET_URL;
+
   return {
     port,
     node_env,
@@ -30,6 +33,8 @@ const config = () => {
     region,
     twilioAccountSid,
     twilioAuthToken,
+    bucketName,
+    bucketUrl,
   };
 };
 
