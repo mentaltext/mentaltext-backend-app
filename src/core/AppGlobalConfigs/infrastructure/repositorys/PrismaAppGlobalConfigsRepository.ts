@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { IAppGlobalConfigsRepository } from "@/core/AppGlobalConfigs/domain/IAppGlobalConfigsRepository";
 import { Filter, operatorEnum } from "@/shared/Types/IFilter";
 import { IAppGlobalConfigsBase } from "../../domain/IAppGlobalConfigs";
+import { criteriaConverter } from "@/shared/utils/criteriaConverter";
 
 export const PrismaAppGlobalConfigsRepository = (
   client: PrismaClient
@@ -42,15 +43,10 @@ const isFilter = (
   typeof obj === "object" &&
   obj !== null &&
   typeof obj.field === "string" &&
-  typeof obj.value === "string" &&
-  obj.operator === operatorEnum.EQUAL;
-
-const criteriaConverter = (criteria: Filter<IAppGlobalConfigsBase>[]) => {
-  return criteria.reduce(
-    (acc, filter) => ({
-      ...acc,
-      [filter.field]: filter.value,
-    }),
-    {}
-  );
-};
+  (typeof obj.value === "string" || typeof obj.value === "number") &&
+  (obj.operator === operatorEnum.EQUAL ||
+    obj.operator === operatorEnum.GREATER_THAN ||
+    obj.operator === operatorEnum.GREATER_THAN_OR_EQUAL ||
+    obj.operator === operatorEnum.LESS_THAN ||
+    obj.operator === operatorEnum.LESS_THAN_OR_EQUAL ||
+    obj.operator === operatorEnum.NOT_EQUAL);

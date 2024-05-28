@@ -4,6 +4,7 @@ import { PrismaProvider } from "@/main/providers/PrismaProvider";
 import { v4 as uuidv4 } from "uuid";
 import { io } from "@/main/providers/SocketServerProvider";
 import { MessageReadStatus } from "@prisma/client";
+import { validatesIfConnectionTimeExpired } from "@/core/AppGlobalConfigs/application/UseCases/validatesIfConnectionTimeExpired";
 
 export const SendMessage: TSendMessgeUseCase =
   (ResponseLogger) => async (req) => {
@@ -41,14 +42,18 @@ export const SendMessage: TSendMessgeUseCase =
         where: { chatId },
         orderBy: { occurredAt: "desc" },
       });
-
+      const canCreateChatConnection = await validatesIfConnectionTimeExpired(
+        lastConnection ??
+          ({
+            occurredAt: "2020-01-01 23:00:00.679",
+            chatId: "",
+            id: "",
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } as any)
+      );
       // validar que la ultima conexcion no tengas mas de 24 horas
       if (lastConnection) {
-        const lastConnectionDate = new Date(lastConnection.occurredAt);
-        const currentDate = new Date();
-        const difference = currentDate.getTime() - lastConnectionDate.getTime();
-        const hoursDifference = difference / (1000 * 3600);
-        if (hoursDifference <= 24) {
+        if (canCreateChatConnection) {
           const createdMessage = await PrismaProvider.message.create({
             data: {
               id: uuidv4(),
@@ -79,7 +84,7 @@ export const SendMessage: TSendMessgeUseCase =
           );
           return ResponseLogger(
             StatusCodes.CREATED,
-            "Chat created",
+            "Message Sended",
             createdMessage
           );
         }
@@ -137,17 +142,31 @@ export const SendMessage: TSendMessgeUseCase =
         );
         io.emit("chats-actualized");
       }
-      const lastConnectionDate = new Date(lastConnection?.occurredAt || "");
-      const currentDate = new Date();
-      const difference = currentDate.getTime() - lastConnectionDate.getTime();
-      const hoursDifference = difference / (1000 * 3600);
-      // Verificar si es el primer mensaje del chat
+
       const totalMessages = await PrismaProvider.message.count({
         where: { chatId },
       });
 
-      if (totalMessages === 0 || hoursDifference > 24) {
-        // Si es el primer mensaje, guardarlo en RetainedMessages
+      if (
+        (totalMessages === 0 || !canCreateChatConnection) &&
+        (retainedMessages[0]?.ownerId === ownerId || retainedMessages.length < 1 )
+      ) {
+        console.log("mando un mensaje queued 1");
+        //Si es el primer mensaje, guardarlo en RetainedMessages
+        sendeMessageToData = await PrismaProvider.retainedMessages.create({
+          data: {
+            id: uuidv4(),
+            chatId,
+            ownerId: ownerId,
+            content,
+            type: "QUEUED",
+            createdAt,
+            status: "SENT",
+          },
+        });
+      } else if ((totalMessages === 0 || !canCreateChatConnection) && retainedMessages[0]?.ownerId === ownerId) {
+        console.log("mando un mensaje queued 2");
+        //Si es el primer mensaje, guardarlo en RetainedMessages
         sendeMessageToData = await PrismaProvider.retainedMessages.create({
           data: {
             id: uuidv4(),
@@ -160,6 +179,7 @@ export const SendMessage: TSendMessgeUseCase =
           },
         });
       } else {
+        console.log("mando un mensaje DELIVERED");
         sendeMessageToData = await PrismaProvider.message.create({
           data: {
             id: uuidv4(),
@@ -181,7 +201,7 @@ export const SendMessage: TSendMessgeUseCase =
 
       return ResponseLogger(
         StatusCodes.CREATED,
-        "Chat created",
+        "Message Sended",
         sendeMessageToData
       );
     } catch (error) {

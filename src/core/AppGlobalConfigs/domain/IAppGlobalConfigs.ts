@@ -1,5 +1,3 @@
 import { AppGlobalConfigs } from "@prisma/client";
 
-  export type IAppGlobalConfigsBase = AppGlobalConfigs;
-
-  
+export type IAppGlobalConfigsBase = AppGlobalConfigs;

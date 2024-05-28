@@ -6,4 +6,3 @@ import { Nullable } from "@/shared/Types/TNullable";
       save(user: IAppGlobalConfigsBase): Promise<GetResult<IAppGlobalConfigsBase, { [x: string]: () => unknown; }>>;
       find(criteria: Filter<IAppGlobalConfigsBase>[]): Promise<Nullable<IAppGlobalConfigsBase>>;
   }
-  
