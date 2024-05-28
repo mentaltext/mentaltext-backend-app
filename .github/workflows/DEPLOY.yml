@@ -21,6 +21,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run build
+      - run: npx prisma generate
 
       - name: rsync deployments
         uses: burnett01/rsync-deployments@5.1
