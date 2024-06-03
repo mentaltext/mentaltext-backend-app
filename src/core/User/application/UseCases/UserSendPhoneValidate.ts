@@ -47,6 +47,7 @@ export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLo
       temporaryCode: "",
     });
   } catch (error) {
+    console.log(error)
     if (error instanceof Error) {
       return ResponseLogger(StatusCodes.BAD_REQUEST, error.message, null);
     }
