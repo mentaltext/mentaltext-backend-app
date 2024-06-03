@@ -1,13 +1,12 @@
 import { config } from "@/main/providers/LocalsProvider";
 import twilio from "twilio";
 
-const PHONE_NUMBER = "+16629673770";
+const PHONE_NUMBER = "+13158190508";
 
 const client = twilio(config().twilioAccountSid, config().twilioAuthToken);
 
 export const sendSMS = async (to: string, body: string) => {
   try {
-    console.log(config().twilioAccountSid, config().twilioAuthToken, "Acc credential");
     const message = await client.messages.create({
       to,
       from: PHONE_NUMBER,

@@ -41,7 +41,7 @@ export const UserSendPhoneValidate: TUserSendPhoneValidateUserCase = (ResponseLo
       user.temporaryCode = generarNumeroAleatorio(5);
       await UpdateUserImp(user);
     }
-    await sendSMS(ensurePhonePrefix(user.phoneNumber), `[MENTALTEX] Tu código de validación es: ${user.temporaryCode}`);
+    await sendSMS(ensurePhonePrefix(user.phoneNumber), `MENTALTEX: Tu código de validación es: ${user.temporaryCode}`);
     return ResponseLogger(StatusCodes.OK, "Phone validated", {
       ...user,
       temporaryCode: "",
